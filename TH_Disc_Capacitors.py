@@ -3,6 +3,8 @@ import re
 import json
 import os
 
+TH_DISC_CAP_PAD_SIZE = 1.6
+
 def search_tht_disc_capacitor(capacitance, voltage, cat_id, access_token, client_id, token_refresher=None):
     # Format Capacitance
     cap_clean = capacitance.strip()
