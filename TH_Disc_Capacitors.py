@@ -1,7 +1,5 @@
 import requests
 import re
-import json
-import os
 
 TH_DISC_CAP_PAD_SIZE = 1.6
 
@@ -158,13 +156,6 @@ def process_disc_capacitor(product_json, lib_config=None):
 
     footprint_name = f"C_D{diameter_str}mm_W{width_str}mm_P{pin_pitch_str}mm.kicad_mod"
 
-    pad_size = 1.6
-    try:
-        with open(os.path.join(os.path.dirname(__file__), 'config.json'), 'r') as f:
-            pad_size = json.load(f).get("TH_DISC_CAP_PAD_SIZE", 1.6)
-    except Exception:
-        pass
-
     return {
         "Symbol Data": {
             "symbol": symbol_name,
@@ -181,7 +172,7 @@ def process_disc_capacitor(product_json, lib_config=None):
             "diameter": diameter,
             "width": width,
             "pinPitch": pin_pitch,
-            "padSize": pad_size
+            "padSize": TH_DISC_CAP_PAD_SIZE
         },
         "footprint_name": footprint_name,
         "sym_lib_name": sym_lib_name,

@@ -200,7 +200,9 @@ class DigikeyPlugin(pcbnew.ActionPlugin):
             return True
 
         # Fallback: Try to load from config.json
-        config_path = os.path.join(os.path.dirname(__file__), 'config.json')
+        # config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.json')
+        PLUGIN_DIR = os.path.dirname(os.path.abspath(__file__))
+        config_path = os.path.join(PLUGIN_DIR, "config.json")
         if os.path.exists(config_path):
             try:
                 with open(config_path, 'r') as f:

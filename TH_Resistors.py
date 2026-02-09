@@ -2,6 +2,8 @@ import requests
 import re
 import math
 
+TH_RESISTOR_PAD_SIZE = 1.4
+
 def process_resistor(product_json):
     # Extraction
     mpn = product_json.get("ManufacturerProductNumber", "Unknown")
@@ -78,7 +80,7 @@ def process_resistor(product_json):
             "price": price
         },
         "Footprint Data": {
-            "padSize": 1.4,
+            "padSize": TH_RESISTOR_PAD_SIZE,
             "length": length,
             "diameter": diameter,
             "pinPitch": pin_pitch,

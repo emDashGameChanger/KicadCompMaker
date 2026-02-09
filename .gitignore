@@ -1,0 +1,25 @@
+config.json
+# Python bytecode / cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Python environments / virtualenvs (if you use them)
+.venv/
+venv/
+env/
+
+# Editor / OS junk (very common in plugin repos)
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# KiCad-specific temporary / generated files you usually don't want to commit
+*.kicad_pro.bak
+*.kicad_sch.bak
+*.kicad_pcb.bak
+*-backups/
