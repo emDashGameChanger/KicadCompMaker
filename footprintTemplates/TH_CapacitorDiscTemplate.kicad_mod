@@ -1,0 +1,127 @@
+(footprint "C_Disc_D{{ diameter | round(2) }}mm_W{{ width | round(2) }}mm_P{{ pinPitch | round(2) }}mm"
+    (version 20241229)
+    (generator "EmDashGameChanger's footprint generator, template stolen from the kind folks at KiCad")
+    (layer "F.Cu")
+    (descr "C, Disc series, Radial, pin pitch={{ pinPitch | round(2) }}mm, diameter*width={{ diameter | round(2) }}*{{ width | round(2) }}mm^2, Capacitor")
+    (tags "C Disc series Radial pin pitch {{ pinPitch | round(2) }}mm diameter {{ diameter | round(2) }}mm width {{ width | round(2) }}mm Capacitor")
+    (property "Reference" "REF**"
+        (at {{ (pinPitch / 2) | round(2) }} -2.5 0)
+        (layer "F.SilkS")
+        (effects
+            (font
+                (size 1 1)
+                (thickness 0.15)
+            )
+        )
+    )
+    (property "Value" "C_Disc_D{{ diameter | round(2) }}mm_W{{ width | round(2) }}mm_P{{ pinPitch | round(2) }}mm"
+        (at {{ (pinPitch / 2) | round(2) }} 2.5 0)
+        (layer "F.Fab")
+        (effects
+            (font
+                (size 1 1)
+                (thickness 0.15)
+            )
+        )
+    )
+    (attr through_hole)
+    (fp_line
+        (start -0.12 {{ (-(width / 2) - 0.12) | round(2) }})
+        (end {{ (pinPitch + 0.12) | round(2) }} {{ (-(width / 2) - 0.12) | round(2) }})
+        (stroke
+            (width 0.12)
+            (type solid)
+        )
+        (layer "F.SilkS")
+    )
+    (fp_line
+        (start -0.12 {{ (-(padSize / 2) - 0.23) | round(2) }})
+        (end -0.12 {{ (-(width / 2) - 0.12) | round(2) }})
+        (stroke
+            (width 0.12)
+            (type solid)
+        )
+        (layer "F.SilkS")
+    )
+    (fp_line
+        (start -0.12 {{ ((padSize / 2) + 0.23) | round(2) }})
+        (end -0.12 {{ ((width / 2) + 0.12) | round(2) }})
+        (stroke
+            (width 0.12)
+            (type solid)
+        )
+        (layer "F.SilkS")
+    )
+     (fp_line
+        (start {{ (pinPitch + 0.12) | round(2) }} {{ (-(width / 2) - 0.12) | round(2) }})
+        (end {{ (pinPitch + 0.12) | round(2) }} {{ (-(padSize / 2) - 0.23) | round(2) }})
+        (stroke
+            (width 0.12)
+            (type solid)
+        )
+        (layer "F.SilkS")
+    )
+      (fp_line
+        (start {{ (pinPitch + 0.12) | round(2) }} {{ ((width / 2) + 0.12) | round(2) }})
+        (end {{ (pinPitch + 0.12) | round(2) }} {{ ((padSize / 2) + 0.23) | round(2) }})
+        (stroke
+            (width 0.12)
+            (type solid)
+        )
+        (layer "F.SilkS")
+    )
+      (fp_line
+        (start {{ (pinPitch + 0.12) | round(2) }} {{ ((width / 2) + 0.12) | round(2) }})
+        (end -0.12 {{ ((width / 2) + 0.12) | round(2) }})
+        (stroke
+            (width 0.12)
+            (type solid)
+        )
+        (layer "F.SilkS")
+    )
+    (fp_rect
+        (start {{ (-(padSize / 2) - 0.25) | round(2) }} {{ (-(width / 2) - 0.25) | round(2) }})
+        (end {{ (pinPitch + (padSize / 2) + 0.25) | round(2) }} {{ ((width / 2) + 0.25) | round(2) }})
+        (stroke
+            (width 0.05)
+            (type solid)
+        )
+        (fill no)
+        (layer "F.CrtYd")
+    )
+    (fp_rect
+        (start 0 {{ (-(width / 2)) | round(2) }})
+        (end {{ pinPitch | round(2) }} {{ (width / 2) | round(2) }})
+        (stroke
+            (width 0.1)
+            (type solid)
+        )
+        (fill no)
+        (layer "F.Fab")
+    )
+    (fp_text user "${REFERENCE}"
+        (at {{ (pinPitch / 2) | round(2) }} 0 0)
+        (layer "F.Fab")
+        (effects
+            (font
+                (size 1 1)
+                (thickness 0.15)
+            )
+        )
+    )
+    (pad "1" thru_hole circle
+        (at 0 0)
+        (size {{ padSize | round(2) }} {{ padSize | round(2) }})
+        (drill 0.8)
+        (layers "*.Cu" "*.Mask")
+        (remove_unused_layers no)
+    )
+    (pad "2" thru_hole circle
+        (at {{ pinPitch | round(2) }} 0)
+        (size {{ padSize | round(2) }} {{ padSize | round(2) }})
+        (drill 0.8)
+        (layers "*.Cu" "*.Mask")
+        (remove_unused_layers no)
+    )
+    (embedded_fonts no)
+)

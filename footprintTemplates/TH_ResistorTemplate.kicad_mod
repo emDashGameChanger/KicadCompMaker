@@ -1,0 +1,193 @@
+(footprint "R_Axial_L{{ length | round(2) }}mm_D{{ diameter | round(2) }}mm_P{{ pinPitch | round(2) }}mm_Horizontal"
+    (version 20240108)
+    (generator "EmDashGameChanger's footprint generator, template stolen from the kind folks at KiCad")
+    (generator_version "0.1")
+    (layer "F.Cu")
+    (descr "Resistor, Axial series, Axial, Horizontal, pin pitch={{ pinPitch | round(2) }}mm, {{ powerRating }}, length*diameter={{ length | round(2) }}*{{ diameter | round(2) }}mm^2, http://cdn-reichelt.de/documents/datenblatt/B400/1_4W%23YAG.pdf")
+    (tags "Resistor Axial series Axial Horizontal pin pitch {{ pinPitch | round(2) }}mm {{ powerRating }} length {{ length | round(2) }}mm diameter {{ diameter | round(2) }}mm")
+    (property "Reference" "REF**"
+        (at {{ refOffsetX | round(2) }} {{ refOffsetY | round(2) }} 0)
+        (layer "F.SilkS")
+        (uuid "")
+        (effects
+            (font
+                (size 0.84 0.84)
+                (thickness 0.15)
+            )
+        )
+    )
+    (property "Value" "R_Axial_L{{ length | round(2) }}mm_D{{ diameter | round(2) }}mm_P{{ pinPitch | round(2) }}mm_Horizontal"
+        (at {{ valueOffsetX | round(2) }} {{ valueOffsetY | round(2) }} 0)
+        (layer "F.Fab")
+        (uuid "")
+        (effects
+            (font
+                (size 0.84 0.84)
+                (thickness 0.15)
+            )
+        )
+    )
+    (property "Footprint" ""
+        (at 0 0 0)
+        (unlocked yes)
+        (layer "F.Fab")
+        (hide yes)
+        (uuid "")
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+        )
+    )
+    (property "Datasheet" ""
+        (at 0 0 0)
+        (unlocked yes)
+        (layer "F.Fab")
+        (hide yes)
+        (uuid "")
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+        )
+    )
+    (property "Description" ""
+        (at 0 0 0)
+        (unlocked yes)
+        (layer "F.Fab")
+        (hide yes)
+        (uuid "")
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+        )
+    )
+    (attr through_hole)
+    (fp_line
+        (start {{ ((pinPitch - length) / 2 - 0.125) | round(2) }} -{{ (diameter / 2 + 0.125) | round(2) }})
+        (end {{ ((pinPitch - length) / 2 - 0.125 + length + 0.25) | round(2) }} -{{ (diameter / 2 + 0.125) | round(2) }})
+        (stroke
+            (width 0.12)
+            (type solid)
+        )
+        (layer "F.SilkS")
+        (uuid "")
+    )
+    (fp_line
+        (start {{ ((pinPitch - length) / 2 - 0.125) | round(2) }} {{ (diameter / 2 + 0.125) | round(2) }})
+        (end {{ ((pinPitch - length) / 2 - 0.125 + length + 0.25) | round(2) }} {{ (diameter / 2 + 0.125) | round(2) }})
+        (stroke
+            (width 0.12)
+            (type solid)
+        )
+        (layer "F.SilkS")
+        (uuid "")
+    )
+    (fp_line
+        (start -{{ (padSize / 2 + 0.25) | round(2) }} -{{ (diameter / 2 + 0.25) | round(2) }})
+        (end -{{ (padSize / 2 + 0.25) | round(2) }} {{ (diameter / 2 + 0.25) | round(2) }})
+        (stroke
+            (width 0.05)
+            (type solid)
+        )
+        (layer "F.CrtYd")
+        (uuid "")
+    )
+    (fp_line
+        (start -{{ (padSize / 2 + 0.25) | round(2) }} {{ (diameter / 2 + 0.25) | round(2) }})
+        (end {{ (0.25 + pinPitch + 0.5 * padSize) | round(2) }} {{ (diameter / 2 + 0.25) | round(2) }})
+        (stroke
+            (width 0.05)
+            (type solid)
+        )
+        (layer "F.CrtYd")
+        (uuid "")
+    )
+    (fp_line
+        (start {{ (0.25 + pinPitch + 0.5 * padSize) | round(2) }} -{{ (diameter / 2 + 0.25) | round(2) }})
+        (end -{{ (padSize / 2 + 0.25) | round(2) }} -{{ (diameter / 2 + 0.25) | round(2) }})
+        (stroke
+            (width 0.05)
+            (type solid)
+        )
+        (layer "F.CrtYd")
+        (uuid "")
+    )
+    (fp_line
+        (start {{ (0.25 + pinPitch + 0.5 * padSize) | round(2) }} {{ (diameter / 2 + 0.25) | round(2) }})
+        (end {{ (0.25 + pinPitch + 0.5 * padSize) | round(2) }} -{{ (diameter / 2 + 0.25) | round(2) }})
+        (stroke
+            (width 0.05)
+            (type solid)
+        )
+        (layer "F.CrtYd")
+        (uuid "")
+    )
+    (fp_line
+        (start {{ ((pinPitch - length) / 2) | round(2) }} -{{ (diameter / 2) | round(2) }})
+        (end {{ ((pinPitch - length) / 2) | round(2) }} {{ (diameter / 2) | round(2) }})
+        (stroke
+            (width 0.1)
+            (type solid)
+        )
+        (layer "F.Fab")
+        (uuid "")
+    )
+    (fp_line
+        (start {{ ((pinPitch - length) / 2) | round(2) }} {{ (diameter / 2) | round(2) }})
+        (end {{ (((pinPitch - length) / 2) + length) | round(2) }} {{ (diameter / 2) | round(2) }})
+        (stroke
+            (width 0.1)
+            (type solid)
+        )
+        (layer "F.Fab")
+        (uuid "")
+    )
+    (fp_line
+        (start {{ (((pinPitch - length) / 2) + length) | round(2) }} -{{ (diameter / 2) | round(2) }})
+        (end {{ ((pinPitch - length) / 2) | round(2) }} -{{ (diameter / 2) | round(2) }})
+        (stroke
+            (width 0.1)
+            (type solid)
+        )
+        (layer "F.Fab")
+        (uuid "")
+    )
+    (fp_line
+        (start {{ (((pinPitch - length) / 2) + length) | round(2) }} -{{ (diameter / 2) | round(2) }})
+        (end {{ (((pinPitch - length) / 2) + length) | round(2) }} {{ (diameter / 2) | round(2) }})
+        (stroke
+            (width 0.1)
+            (type solid)
+        )
+        (layer "F.Fab")
+        (uuid "")
+    )
+    (fp_text user "${REFERENCE}"
+        (at 2.54 0 0)
+        (layer "F.Fab")
+        (uuid "")
+        (effects
+            (font
+                (size 0.72 0.72)
+                (thickness 0.108)
+            )
+        )
+    )
+    (pad "1" thru_hole circle
+        (at 0 0)
+        (size 1.4 1.4)
+        (drill 0.7)
+        (layers "*.Cu" "*.Mask")
+        (remove_unused_layers no)
+        (uuid "")
+    )
+    (pad "2" thru_hole oval
+        (at {{ pinPitch | round(2) }} 0)
+		(drill 0.7)
+        (layers "*.Cu" "*.Mask")
+        (remove_unused_layers no)
+        (uuid "")
+	)
+)
