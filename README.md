@@ -13,7 +13,7 @@
         
     To install (Linux Mint 22):
     In the terminal navigate to the folder you want to install into, for KiCad 9:
-    cd ~/.local/share/kicad/9.0/plugins
+    cd ~/.local/share/kicad/9.0/scripting/plugins/
     git clone https://github.com/emDashGameChanger/KicadCompMaker
     
     When a component is generated they will go:
