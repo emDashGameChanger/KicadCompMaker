@@ -1,0 +1,11 @@
+# Test batch: 10 disc ceramic capacitors, E12 series, picofarad range, 50v
+cap_film value=10pF type=Disc voltage=50v
+cap_film value=12pF type=Disc voltage=50v
+cap_film value=15pF type=Disc voltage=50v
+cap_film value=18pF type=Disc voltage=50v
+cap_film value=22pF type=Disc voltage=50v
+cap_film value=27pF type=Disc voltage=50v
+cap_film value=33pF type=Disc voltage=50v
+cap_film value=39pF type=Disc voltage=50v
+cap_film value=47pF type=Disc voltage=50v
+cap_film value=56pF type=Disc voltage=50v

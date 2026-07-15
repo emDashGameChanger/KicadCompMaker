@@ -1,14 +1,37 @@
 import requests
 import re
 
+try:
+    from .DigikeyVoltageMap import parse_voltage_volts, lookup_value_id
+except ImportError:
+    from DigikeyVoltageMap import parse_voltage_volts, lookup_value_id
+
 TH_DISC_CAP_PAD_SIZE = 1.6
+
+
+def _product_voltage_volts(product_json):
+    """Extracts a product's own voltage rating (ParameterId 14) and parses it
+    to a float number of volts, falling back to a regex search over the
+    product's description for products that don't expose it as a structured
+    parameter. Returns None if no voltage could be determined."""
+    for p in product_json.get("Parameters", []):
+        if p.get("ParameterId") == 14:
+            volts = parse_voltage_volts(p.get("ValueText", ""))
+            if volts is not None:
+                return volts
+    desc = product_json.get("Description", {}).get("DetailedDescription", "")
+    match = re.search(r'(\d+(?:\.\d+)?)\s*V', desc)
+    if match:
+        return float(match.group(1))
+    return None
+
 
 def search_tht_disc_capacitor(capacitance, voltage, cat_id, access_token, client_id, token_refresher=None, type_idx=0):
     # Format Capacitance
     cap_clean = capacitance.strip()
     if not cap_clean.endswith("F"):
         cap_clean += "F"
-    
+
     # Ensure space between value and unit (e.g. "22 µF")
     match = re.match(r'^([\d\.]+)\s*([µumkM]?)F$', cap_clean)
     if match:
@@ -17,12 +40,20 @@ def search_tht_disc_capacitor(capacitance, voltage, cat_id, access_token, client
     else:
         cap_str = cap_clean
 
-    # Format Voltage
-    if voltage.lower() == "i don't care":
-        vol_str = None
-    else:
-        vol_clean = voltage.lower().replace("v", "").strip()
-        vol_str = f"{vol_clean} V"
+    # Format Voltage - ParameterId 14 ("Voltage - Rated") needs Digi-Key's own
+    # internal ValueId, not display text (e.g. "50 V" matches nothing - the
+    # old code's bug). If we don't have a confirmed ValueId for this voltage,
+    # skip the server-side filter and filter the results client-side instead
+    # of silently returning zero matches.
+    target_volts = None
+    voltage_value_id = None
+    needs_client_filter = False
+    if voltage.lower() != "i don't care":
+        target_volts = parse_voltage_volts(voltage)
+        if target_volts is not None:
+            voltage_value_id = lookup_value_id(target_volts)
+            if voltage_value_id is None:
+                needs_client_filter = True
 
     if type_idx == 1: # Film
         cat_id = "62" # Film Capacitors
@@ -31,21 +62,20 @@ def search_tht_disc_capacitor(capacitance, voltage, cat_id, access_token, client
             {"ParameterId": 69, "FilterValues": [{"Id": "411897"}]}, # Through Hole
             {"ParameterId": 909, "FilterValues": [{"Id": "388558"}]} # Polyester
         ]
-        if vol_str:
-            filters.append({"ParameterId": 2079, "FilterValues": [{"Id": vol_str}]})
     else: # Disc
         filters = [
             {"ParameterID": 2049, "FilterValues": [{"Id": cap_str}]},
             {"ParameterId": 69, "FilterValues": [{"Id": "411897"}]},
             {"ParameterId": 16, "FilterValues": [{"Id": "392278"}, {"Id": "392342"}]}
         ]
-        if vol_str:
-            filters.append({"ParameterId": 2079, "FilterValues": [{"Id": vol_str}]})
+
+    if voltage_value_id:
+        filters.append({"ParameterId": 14, "FilterValues": [{"Id": voltage_value_id}]})
 
     url = "https://api.digikey.com/products/v4/search/keyword"
     payload = {
         "Keywords": "capacitor",
-        "Limit": 50,
+        "Limit": 100 if needs_client_filter else 50,
         "Offset": 0,
         "MinimumQuantityAvailable": 1,
         "FilterOptionsRequest": {
@@ -67,14 +97,22 @@ def search_tht_disc_capacitor(capacitance, voltage, cat_id, access_token, client
         "authorization": f"Bearer {access_token}"
     }
     response = requests.post(url, json=payload, headers=headers)
-    
+
     if response.status_code == 401 and token_refresher:
         new_token = token_refresher()
         if new_token:
             headers["authorization"] = f"Bearer {new_token}"
             response = requests.post(url, json=payload, headers=headers)
 
-    return response.json()
+    results = response.json()
+
+    if needs_client_filter and target_volts is not None:
+        products = results.get("Products", [])
+        filtered = [p for p in products if _product_voltage_volts(p) == target_volts]
+        results["Products"] = filtered
+        results["ProductsCount"] = len(filtered)
+
+    return results
 
 def process_disc_capacitor(product_json, lib_config=None):
     if lib_config is None:
@@ -112,7 +150,7 @@ def process_disc_capacitor(product_json, lib_config=None):
         val = p.get("ValueText", "Unknown")
         if pid == 2049: capacitance = val
         elif pid == 3: tolerance = val
-        elif pid == 2079: voltage = val
+        elif pid == 14: voltage = val
         elif pid == 508: lead_spacing_raw = val
         elif pid == 46: diameter_raw = val
 

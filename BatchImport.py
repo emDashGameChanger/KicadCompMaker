@@ -1,4 +1,5 @@
 import shlex
+import concurrent.futures
 from dataclasses import dataclass, field
 
 try:
@@ -201,15 +202,43 @@ BATCH_RESOLVERS = {
 }
 
 
-def run_batch(batch_text, access_token, client_id, token_refresher, generate_library_files):
+def _search_job(job, access_token, client_id, token_refresher):
+    """Runs just the network search call for one resolved spec. Safe to call
+    concurrently - touches no shared state besides the (thread-safe) requests
+    call itself. Returns (spec, resolved, top_product_or_None, error_or_None),
+    where error is a (status, detail) tuple."""
+    spec, resolved = job
+    try:
+        results = resolved['search_fn'](
+            *resolved['search_args'], access_token, client_id, token_refresher,
+            **resolved['search_kwargs'])
+    except Exception as e:
+        return spec, resolved, None, ('api_error', str(e))
+
+    if results is None:
+        return spec, resolved, None, ('api_error', 'API call failed (auth issue)')
+    if results.get('ProductsCount', 0) == 0 or not results.get('Products'):
+        return spec, resolved, None, ('no_results', 'No matching products')
+    return spec, resolved, results['Products'][0], None
+
+
+def run_batch(batch_text, access_token, client_id, token_refresher, generate_library_files, max_workers=5):
     """Runs every spec in batch_text through the existing search/process/generate
     pipeline, auto-picking the top (cheapest, in-stock) Digi-Key result per line.
     Returns a list of row dicts: {line_no, type, value, status, detail}.
     status is one of: generated, duplicate, no_results, parse_error,
     validation_error, api_error, process_error, gen_error.
-    A failure on one line never aborts the rest of the batch."""
+    A failure on one line never aborts the rest of the batch.
+
+    The Digi-Key search calls for different lines run concurrently (up to
+    max_workers at a time) since they're independent network I/O. The
+    process/generate step (which appends to shared .kicad_sym/.kicad_mod
+    library files and is NOT safe to run concurrently) always runs on this
+    thread, one line at a time, in original line order - see the comment
+    below on why executor.map makes that automatic without any locking."""
     specs = parse_batch_text(batch_text)
-    rows = []
+    rows_by_line = {}
+    search_jobs = []  # (spec, resolved) for specs that resolved OK, in original order
 
     for spec in specs:
         row = {
@@ -223,14 +252,14 @@ def run_batch(batch_text, access_token, client_id, token_refresher, generate_lib
         if '_parse_error' in spec.fields:
             row['status'] = 'parse_error'
             row['detail'] = spec.fields['_parse_error']
-            rows.append(row)
+            rows_by_line[spec.line_no] = row
             continue
 
         resolver = BATCH_RESOLVERS.get(spec.type_kw)
         if resolver is None:
             row['status'] = 'parse_error'
             row['detail'] = f"Unrecognized type keyword: {spec.type_kw!r}"
-            rows.append(row)
+            rows_by_line[spec.line_no] = row
             continue
 
         try:
@@ -238,60 +267,51 @@ def run_batch(batch_text, access_token, client_id, token_refresher, generate_lib
         except BatchSpecError as e:
             row['status'] = 'validation_error'
             row['detail'] = str(e)
-            rows.append(row)
+            rows_by_line[spec.line_no] = row
             continue
 
         row['type'] = resolved['display_type']
         row['value'] = resolved['display_value']
+        rows_by_line[spec.line_no] = row
+        search_jobs.append((spec, resolved))
 
-        try:
-            results = resolved['search_fn'](
-                *resolved['search_args'], access_token, client_id, token_refresher,
-                **resolved['search_kwargs'])
-        except Exception as e:
-            row['status'] = 'api_error'
-            row['detail'] = str(e)
-            rows.append(row)
-            continue
+    if search_jobs:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            search_fn = lambda job: _search_job(job, access_token, client_id, token_refresher)
+            # executor.map submits every job up front (so the searches overlap in
+            # background threads) but yields results back in the same order the
+            # jobs were submitted in - so this loop, which does the file-writing
+            # process/generate step, still runs single-threaded and in original
+            # line order, even though the slow network part happened concurrently.
+            for spec, resolved, top_product, error in executor.map(search_fn, search_jobs):
+                row = rows_by_line[spec.line_no]
 
-        if results is None:
-            row['status'] = 'api_error'
-            row['detail'] = 'API call failed (auth issue)'
-            rows.append(row)
-            continue
-        if results.get('ProductsCount', 0) == 0 or not results.get('Products'):
-            row['status'] = 'no_results'
-            row['detail'] = 'No matching products'
-            rows.append(row)
-            continue
+                if error:
+                    row['status'], row['detail'] = error
+                    continue
 
-        top_product = results['Products'][0]
+                try:
+                    processed = resolved['process_fn'](top_product, *resolved['process_args'])
+                except Exception as e:
+                    row['status'] = 'process_error'
+                    row['detail'] = str(e)
+                    continue
 
-        try:
-            processed = resolved['process_fn'](top_product, *resolved['process_args'])
-        except Exception as e:
-            row['status'] = 'process_error'
-            row['detail'] = str(e)
-            rows.append(row)
-            continue
+                try:
+                    success, msg = generate_library_files(processed)
+                except Exception as e:
+                    row['status'] = 'gen_error'
+                    row['detail'] = str(e)
+                    continue
 
-        try:
-            success, msg = generate_library_files(processed)
-        except Exception as e:
-            row['status'] = 'gen_error'
-            row['detail'] = str(e)
-            rows.append(row)
-            continue
+                if not success:
+                    row['status'] = 'gen_error'
+                    row['detail'] = msg
+                elif msg.startswith("Already exists:"):
+                    row['status'] = 'duplicate'
+                    row['detail'] = msg
+                else:
+                    row['status'] = 'generated'
+                    row['detail'] = msg
 
-        if not success:
-            row['status'] = 'gen_error'
-            row['detail'] = msg
-        elif msg.startswith("Already exists:"):
-            row['status'] = 'duplicate'
-            row['detail'] = msg
-        else:
-            row['status'] = 'generated'
-            row['detail'] = msg
-        rows.append(row)
-
-    return rows
+    return [rows_by_line[spec.line_no] for spec in specs]

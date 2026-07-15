@@ -2578,4 +2578,1844 @@
 	)
 	(embedded_fonts no)
 )
+
+(symbol "C_10pF_50V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "10pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_D4.00mm_W2.50mm_P5.00mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://product.tdk.com/en/system/files/dam/doc/product/capacitor/ceramic/lead-mlcc/catalog/leadmlcc_halogenfree_fg_en.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "50V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "445-173471-1-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "FG28C0G1H100DNT06"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.22"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±0.5pF"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_10pF_50V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_12pF_50V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "12pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_D4.00mm_W2.60mm_P2.50mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://www.vishay.com/docs/45171/kseries.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "50V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "BC1002TR-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "K120J15C0GF5TL2"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.26"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±5%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_12pF_50V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_15pF_50V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "15pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_D4.00mm_W2.60mm_P2.50mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://www.vishay.com/docs/45171/kseries.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "50V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "K150J15C0GF53L2-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "K150J15C0GF53L2"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.25"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±5%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_15pF_50V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_18pF_50V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "18pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_D4.00mm_W2.60mm_P2.50mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://www.vishay.com/docs/45171/kseries.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "50V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "K180J15C0GF53L2-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "K180J15C0GF53L2"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.25"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±5%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_18pF_50V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_22pF_50V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "22pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_D4.00mm_W2.50mm_P2.50mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://product.tdk.com/en/system/files/dam/doc/product/capacitor/ceramic/lead-mlcc/catalog/leadmlcc_halogenfree_fg_en.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "50V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "445-173182-1-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "FG18C0G1H220JNT06"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.22"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±5%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_22pF_50V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_27pF_50V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "27pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_D4.00mm_W2.60mm_P5.00mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://www.vishay.com/docs/45171/kseries.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "50V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "BC1035TR-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "K270J15C0GF5TH5"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.26"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±5%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_27pF_50V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_33pF_50V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "33pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_D4.00mm_W2.60mm_P2.50mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://www.vishay.com/docs/45171/kseries.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "50V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "K330K15C0GF53L2-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "K330K15C0GF53L2"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.25"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±10%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_33pF_50V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_39pF_50V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "39pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_D4.00mm_W2.60mm_P2.50mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://www.vishay.com/docs/45171/kseries.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "50V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "56-K390J15C0GF53L2-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "K390J15C0GF53L2"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.25"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±5%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_39pF_50V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_47pF_50V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "47pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_D4.00mm_W2.50mm_P5.00mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://product.tdk.com/en/system/files/dam/doc/product/capacitor/ceramic/lead-mlcc/catalog/leadmlcc_halogenfree_fg_en.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "50V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "445-173499-1-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "FG28C0G1H470JNT06"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.22"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±5%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_47pF_50V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_56pF_50V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "56pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_D4.00mm_W2.60mm_P2.50mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://www.vishay.com/docs/45171/kseries.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "50V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "BC1010TR-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "K560J15C0GF5TL2"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.26"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±5%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_56pF_50V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
 )
