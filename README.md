@@ -10,6 +10,64 @@
         Capacitors
           Aluminum Electrolytic Radial - These are for the can type that sometimes goes "pop". Both leads out the bottom
           Disc - Those ugly brown ones, and the prettier blue ones, leads out the bottom
+
+    Batch Import:
+    There is a third tab, "Batch Import", for when you have a list of parts to add instead of one at a time. Type or paste
+    a list into the text box (or use "Load from File..." to load a .txt file), one part spec per line, then click Search.
+    Each line is looked up on Digikey and the cheapest in-stock match is generated automatically - no per-part picker.
+    When it's done you'll get a report showing what happened for each line (generated, already existed, no results, or an error).
+
+    FILE FORMAT
+      - Plain .txt file, or just typed/pasted into the text box.
+      - One part spec per line: <type> field=value field=value ...
+      - Blank lines are ignored.
+      - Lines starting with # are comments and are ignored.
+      - Field names and the type keyword are not case-sensitive.
+      - If a value contains a space, quote it: power="1/4 watt"
+      - Unknown/misspelled field names are silently ignored (they don't cause an error, they just have no effect).
+      - Every line needs a "value" field - that's the only field that's always required.
+      - Any field you leave out just uses its default (same default the GUI itself starts with).
+
+    SUPPORTED TYPES AND THEIR FIELDS
+
+      resistor  ->  through-hole resistor
+        value        (required)  e.g. 4.7k, 10k, 220, 1M
+        composition  (optional)  Metal Film | Carbon Film            default: Metal Film
+        power        (optional)  1/8 watt | 1/4 watt | 1/2 watt | 1 watt   default: 1/8 watt
+        tolerance    (optional)  +- .1% | +-1% | +-2% | +-5% | +-10% | +-20%   default: +- .1%
+
+      cap_alum  ->  aluminum electrolytic (radial/axial can) capacitor
+        value    (required)  e.g. 10u, 100u, 220u
+        type     (optional)  Axial | Radial                      default: Axial
+        voltage  (optional)  6.3v | 10v | 16v | 25v | 50v | 63v | 100v, OR any other voltage
+                              (e.g. 35v) as a custom value, OR any / dontcare to skip
+                              voltage filtering entirely        default: 6.3v
+
+      cap_film  ->  disc ceramic or film capacitor
+        value    (required)  e.g. 100n, 10n, 1u
+        type     (optional)  Disc | Film                         default: Disc
+        voltage  (optional)  25v | 50v | 100v | 500v | 1kV | 2kV, OR a custom voltage,
+                              OR any / dontcare to skip voltage filtering   default: 25v
+
+      cap_mica  ->  mica/PTFE capacitor
+        value    (required)  e.g. 47n, 100pF
+        type     (optional)  Axial | Radial                      default: Axial
+        voltage  (optional)  6.3v | 10v | 16v | 25v | 50v | 63v | 100v, OR a custom voltage,
+                              OR any / dontcare to skip voltage filtering   default: 6.3v
+
+    Not supported yet: Surface Mount and Diodes have no batch (or single-search) support at all yet - those tabs are
+    just placeholders in the GUI.
+
+    EXAMPLE FILE
+      # resistors: value is the only thing you must set
+      resistor value=1k
+      resistor value=4.7k power="1/4 watt" tolerance=+-5%
+      resistor value=10k composition="Carbon Film"
+
+      # capacitors
+      cap_alum value=100u type=Radial voltage=25v
+      cap_film value=10n type=Film voltage=any
+      cap_mica value=100pF
         
     To install (Linux Mint 22):
     In the terminal navigate to the folder you want to install into, for KiCad 9:

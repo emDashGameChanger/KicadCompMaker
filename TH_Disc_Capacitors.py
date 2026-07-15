@@ -3,7 +3,7 @@ import re
 
 TH_DISC_CAP_PAD_SIZE = 1.6
 
-def search_tht_disc_capacitor(capacitance, voltage, cat_id, access_token, client_id, token_refresher=None):
+def search_tht_disc_capacitor(capacitance, voltage, cat_id, access_token, client_id, token_refresher=None, type_idx=0):
     # Format Capacitance
     cap_clean = capacitance.strip()
     if not cap_clean.endswith("F"):
@@ -24,13 +24,23 @@ def search_tht_disc_capacitor(capacitance, voltage, cat_id, access_token, client
         vol_clean = voltage.lower().replace("v", "").strip()
         vol_str = f"{vol_clean} V"
 
-    filters = [
-        {"ParameterID": 2049, "FilterValues": [{"Id": cap_str}]},
-        {"ParameterId": 69, "FilterValues": [{"Id": "411897"}]},
-        {"ParameterId": 16, "FilterValues": [{"Id": "392278"}, {"Id": "392342"}]}
-    ]
-    if vol_str:
-        filters.append({"ParameterId": 2079, "FilterValues": [{"Id": vol_str}]})
+    if type_idx == 1: # Film
+        cat_id = "62" # Film Capacitors
+        filters = [
+            {"ParameterID": 2049, "FilterValues": [{"Id": cap_str}]},
+            {"ParameterId": 69, "FilterValues": [{"Id": "411897"}]}, # Through Hole
+            {"ParameterId": 909, "FilterValues": [{"Id": "388558"}]} # Polyester
+        ]
+        if vol_str:
+            filters.append({"ParameterId": 2079, "FilterValues": [{"Id": vol_str}]})
+    else: # Disc
+        filters = [
+            {"ParameterID": 2049, "FilterValues": [{"Id": cap_str}]},
+            {"ParameterId": 69, "FilterValues": [{"Id": "411897"}]},
+            {"ParameterId": 16, "FilterValues": [{"Id": "392278"}, {"Id": "392342"}]}
+        ]
+        if vol_str:
+            filters.append({"ParameterId": 2079, "FilterValues": [{"Id": vol_str}]})
 
     url = "https://api.digikey.com/products/v4/search/keyword"
     payload = {
@@ -151,10 +161,16 @@ def process_disc_capacitor(product_json, lib_config=None):
     else:
         voltage = voltage.replace(" ", "")
 
-    symbol_name = f"{designator}_{capacitance}_{voltage}"
+    if lib_config.get('is_film'):
+        symbol_name = f"{designator}_Film_{capacitance}_{voltage}"
+    else:
+        symbol_name = f"{designator}_{capacitance}_{voltage}"
+        
     if symbol_name.endswith("_"): symbol_name = symbol_name[:-1]
 
     footprint_name = f"C_D{diameter_str}mm_W{width_str}mm_P{pin_pitch_str}mm.kicad_mod"
+    if lib_config.get('is_film'):
+        footprint_name = f"C_Film_L{diameter_str}mm_W{width_str}mm_P{pin_pitch_str}mm.kicad_mod"
 
     return {
         "Symbol Data": {

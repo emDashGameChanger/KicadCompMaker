@@ -1,4 +1,5 @@
 config.json
+notes.txt
 # Python bytecode / cache files
 __pycache__/
 *.pyc

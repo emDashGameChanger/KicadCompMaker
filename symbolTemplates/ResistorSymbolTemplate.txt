@@ -67,7 +67,7 @@
 				(hide yes)
 			)
 		)
-		(property "Price "{{price}}"
+		(property "Price" "{{price}}"
 			(at 0 0 0)
 			(effects
 				(font
@@ -76,7 +76,7 @@
 				(hide yes)
 			)
 		)
-		(property "Digikey Part# "{{dkPart}}"
+		(property "Digikey Part#" "{{dkPart}}"
 			(at 0 0 0)
 			(effects
 				(font
@@ -85,7 +85,7 @@
 				(hide yes)
 			)
 		)
-		(property "Manufacture Part# "{{mfrPart}}"
+		(property "Manufacture Part#" "{{mfrPart}}"
 			(at 0 0 0)
 			(effects
 				(font
@@ -164,4 +164,3 @@
 			)
 		)
 	)
-

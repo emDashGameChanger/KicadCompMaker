@@ -1,0 +1,5 @@
+# Test batch: through-hole resistors, 1%, 1/8 watt
+resistor value=1k tolerance=+-1% power="1/8 watt"
+resistor value=2.2k tolerance=+-1% power="1/8 watt"
+resistor value=4.7k tolerance=+-1% power="1/8 watt"
+resistor value=6.8k tolerance=+-1% power="1/8 watt"

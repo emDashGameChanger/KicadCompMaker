@@ -1,6 +1,15 @@
 import wx
 import json
 
+RES_COMP_OPTS = ["Metal Film", "Carbon Film"]
+RES_PWR_OPTS = ["1/8 watt", "1/4 watt", "1/2 watt", "1 watt"]
+RES_TOL_OPTS = ["+- .1%", "+-1%", "+-2%", "+-5%", "+-10%", "+-20%"]
+
+CAP_ALUM_TYPE_OPTS = ["Axial", "Radial"]
+CAP_ALUM_VOL_OPTS = ["6.3v", "10v", "16v", "25v", "50v", "63v", "100v"]
+CAP_FILM_TYPE_OPTS = ["Disc", "Film"]
+CAP_FILM_VOL_OPTS = ["25v", "50v", "100v", "500v", "1kV", "2kV", "I don't care"]
+
 class ProgressCounterDialog(wx.Dialog):
     def __init__(self, parent, title, message):
         wx.Dialog.__init__(self, parent, title=title, style=wx.DEFAULT_DIALOG_STYLE)
@@ -25,7 +34,7 @@ class ProgressCounterDialog(wx.Dialog):
         self.counter_label.SetLabel(f"{self.count} seconds")
 
 class DigikeyDialog(wx.Dialog):
-    def create_cap_controls(self, parent, key, state, show_type=True, custom_vol_opts=None):
+    def create_cap_controls(self, parent, key, state, show_type=True, type_opts=None, custom_vol_opts=None):
         sizer = wx.BoxSizer(wx.VERTICAL)
         
         # Value
@@ -42,7 +51,8 @@ class DigikeyDialog(wx.Dialog):
             row_type = wx.BoxSizer(wx.HORIZONTAL)
             lbl_type = wx.StaticText(parent, label="Type:")
             row_type.Add(lbl_type, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-            type_opts = ["Axial", "Radial"]
+            if type_opts is None:
+                type_opts = CAP_ALUM_TYPE_OPTS
             saved_type_idx = state.get(f'{key}_type_idx', 0)
             for i, opt in enumerate(type_opts):
                 style = wx.RB_GROUP if i == 0 else 0
@@ -61,7 +71,7 @@ class DigikeyDialog(wx.Dialog):
         if custom_vol_opts:
             vol_opts = custom_vol_opts
         else:
-            vol_opts = ["6.3v", "10v", "16v", "25v", "50v", "63v", "100v"]
+            vol_opts = CAP_ALUM_VOL_OPTS
         vol_radios = []
         saved_vol_idx = state.get(f'{key}_vol_idx', 0)
         if saved_vol_idx >= len(vol_opts): saved_vol_idx = 0
@@ -104,19 +114,35 @@ class DigikeyDialog(wx.Dialog):
 
         res_sizer = wx.BoxSizer(wx.VERTICAL)
         
-        # Value Input
+        # Composition
         row1 = wx.BoxSizer(wx.HORIZONTAL)
+        lbl_comp = wx.StaticText(self.tht_resistors, label="Composition:")
+        row1.Add(lbl_comp, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        comp_opts = RES_COMP_OPTS
+        self.tht_res_comp_radios = []
+        saved_comp_idx = state.get('res_comp_idx', 0)
+        for i, opt in enumerate(comp_opts):
+            style = wx.RB_GROUP if i == 0 else 0
+            rb = wx.RadioButton(self.tht_resistors, label=opt, style=style)
+            if i == saved_comp_idx:
+                rb.SetValue(True)
+            self.tht_res_comp_radios.append(rb)
+            row1.Add(rb, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        res_sizer.Add(row1, 0, wx.EXPAND | wx.ALL, 5)
+        
+        # Value Input
+        row2 = wx.BoxSizer(wx.HORIZONTAL)
         lbl_val = wx.StaticText(self.tht_resistors, label="Value:")
         self.tht_res_val = wx.TextCtrl(self.tht_resistors)
-        row1.Add(lbl_val, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        row1.Add(self.tht_res_val, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        res_sizer.Add(row1, 0, wx.EXPAND | wx.ALL, 5)
+        row2.Add(lbl_val, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        row2.Add(self.tht_res_val, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        res_sizer.Add(row2, 0, wx.EXPAND | wx.ALL, 5)
 
         # Power Rating
-        row2 = wx.BoxSizer(wx.HORIZONTAL)
+        row3 = wx.BoxSizer(wx.HORIZONTAL)
         lbl_pwr = wx.StaticText(self.tht_resistors, label="Power Rating:")
-        row2.Add(lbl_pwr, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        pwr_opts = ["1/8 watt", "1/4 watt", "1/2 watt", "1 watt"]
+        row3.Add(lbl_pwr, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        pwr_opts = RES_PWR_OPTS
         self.tht_res_pwr_radios = []
         saved_pwr_idx = state.get('pwr_idx', 0)
         for i, opt in enumerate(pwr_opts):
@@ -125,14 +151,14 @@ class DigikeyDialog(wx.Dialog):
             if i == saved_pwr_idx:
                 rb.SetValue(True)
             self.tht_res_pwr_radios.append(rb)
-            row2.Add(rb, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        res_sizer.Add(row2, 0, wx.EXPAND | wx.ALL, 5)
+            row3.Add(rb, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        res_sizer.Add(row3, 0, wx.EXPAND | wx.ALL, 5)
 
         # Tolerance
-        row3 = wx.BoxSizer(wx.HORIZONTAL)
+        row4 = wx.BoxSizer(wx.HORIZONTAL)
         lbl_tol = wx.StaticText(self.tht_resistors, label="Tolerance:")
-        row3.Add(lbl_tol, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        tol_opts = ["+- .1%", "+-1%", "+-2%", "+-5%", "+-10%", "+-20%"]
+        row4.Add(lbl_tol, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        tol_opts = RES_TOL_OPTS
         self.tht_res_tol_radios = []
         saved_tol_idx = state.get('tol_idx', 0)
         for i, opt in enumerate(tol_opts):
@@ -141,8 +167,8 @@ class DigikeyDialog(wx.Dialog):
             if i == saved_tol_idx:
                 rb.SetValue(True)
             self.tht_res_tol_radios.append(rb)
-            row3.Add(rb, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        res_sizer.Add(row3, 0, wx.EXPAND | wx.ALL, 5)
+            row4.Add(rb, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        res_sizer.Add(row4, 0, wx.EXPAND | wx.ALL, 5)
 
         self.tht_resistors.SetSizer(res_sizer)
 
@@ -162,9 +188,8 @@ class DigikeyDialog(wx.Dialog):
 
         # 2. Film (Disc)
         self.tht_cap_film = wx.Panel(self.tht_cap_notebook)
-        disc_vol_opts = ["25v", "50v", "100v", "500v", "1kV", "2kV", "I don't care"]
-        self.cap_tabs['film'] = self.create_cap_controls(self.tht_cap_film, 'film', state, show_type=False, custom_vol_opts=disc_vol_opts)
-        self.tht_cap_notebook.AddPage(self.tht_cap_film, "Disc")
+        self.cap_tabs['film'] = self.create_cap_controls(self.tht_cap_film, 'film', state, show_type=True, type_opts=CAP_FILM_TYPE_OPTS, custom_vol_opts=CAP_FILM_VOL_OPTS)
+        self.tht_cap_notebook.AddPage(self.tht_cap_film, "Disc/Film")
 
         # 3. Mica/PTFE
         self.tht_cap_mica = wx.Panel(self.tht_cap_notebook)
@@ -214,6 +239,25 @@ class DigikeyDialog(wx.Dialog):
         smd_sizer.Add(self.smd_notebook, 1, wx.EXPAND | wx.ALL, 5)
         self.tab_smd.SetSizer(smd_sizer)
 
+        # Tab 3: Batch Import
+        self.tab_batch = wx.Panel(self.notebook)
+        self.notebook.AddPage(self.tab_batch, "Batch Import")
+
+        batch_sizer = wx.BoxSizer(wx.VERTICAL)
+        hint = wx.StaticText(self.tab_batch, label=(
+            "One spec per line: <type> field=value ... (# comments and blank lines are ignored).\n"
+            "Types: resistor, cap_alum, cap_film, cap_mica. See README.md for full syntax."))
+        batch_sizer.Add(hint, 0, wx.EXPAND | wx.ALL, 5)
+
+        self.batch_text = wx.TextCtrl(self.tab_batch, style=wx.TE_MULTILINE)
+        batch_sizer.Add(self.batch_text, 1, wx.EXPAND | wx.ALL, 5)
+
+        btn_load = wx.Button(self.tab_batch, label="Load from File...")
+        batch_sizer.Add(btn_load, 0, wx.ALL, 5)
+        btn_load.Bind(wx.EVT_BUTTON, self.on_load_batch_file)
+
+        self.tab_batch.SetSizer(batch_sizer)
+
         # Restore Main tab selection
         self.notebook.SetSelection(state.get('main_tab', 0))
 
@@ -223,6 +267,20 @@ class DigikeyDialog(wx.Dialog):
 
         self.SetSizer(sizer)
         self.CenterOnParent()
+
+    def on_load_batch_file(self, event):
+        with wx.FileDialog(self, "Load batch import file", wildcard="Text files (*.txt)|*.txt|All files (*.*)|*.*",
+                            style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST) as file_dlg:
+            if file_dlg.ShowModal() != wx.ID_OK:
+                return
+            path = file_dlg.GetPath()
+            try:
+                with open(path, 'r', encoding='utf-8', errors='replace') as f:
+                    contents = f.read()
+            except Exception as e:
+                wx.MessageBox(f"Could not read file:\n{e}", "Error", wx.OK | wx.ICON_ERROR, parent=self)
+                return
+            self.batch_text.SetValue(contents)
 
 class JsonViewDialog(wx.Dialog):
     def __init__(self, parent, product_json, generator_callback):
@@ -345,5 +403,43 @@ class ResultDialog(wx.Dialog):
         success, msg = self.generator_callback(processed_data)
         icon = wx.ICON_INFORMATION if success else wx.ICON_ERROR
         wx.MessageBox(msg, "Generation Status", wx.OK | icon)
-        
+
         self.EndModal(wx.ID_OK)
+
+class BatchResultDialog(wx.Dialog):
+    def __init__(self, parent, report_rows):
+        wx.Dialog.__init__(self, parent, title="Batch Import Results", size=(750, 450),
+                            style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        self.list_ctrl = wx.ListCtrl(self, style=wx.LC_REPORT | wx.BORDER_SUNKEN)
+        self.list_ctrl.InsertColumn(0, "Line#", width=50)
+        self.list_ctrl.InsertColumn(1, "Type", width=90)
+        self.list_ctrl.InsertColumn(2, "Value", width=100)
+        self.list_ctrl.InsertColumn(3, "Status", width=110)
+        self.list_ctrl.InsertColumn(4, "Detail", width=350)
+
+        for row in report_rows:
+            index = self.list_ctrl.InsertItem(self.list_ctrl.GetItemCount(), str(row['line_no']))
+            self.list_ctrl.SetItem(index, 1, row['type'])
+            self.list_ctrl.SetItem(index, 2, row['value'])
+            self.list_ctrl.SetItem(index, 3, row['status'])
+            self.list_ctrl.SetItem(index, 4, row['detail'])
+
+        sizer.Add(self.list_ctrl, 1, wx.EXPAND | wx.ALL, 5)
+
+        summary = wx.StaticText(self, label=self._summarize(report_rows))
+        sizer.Add(summary, 0, wx.EXPAND | wx.ALL, 5)
+
+        btns = self.CreateButtonSizer(wx.OK)
+        sizer.Add(btns, 0, wx.EXPAND | wx.ALL, 5)
+
+        self.SetSizer(sizer)
+        self.CenterOnParent()
+
+    @staticmethod
+    def _summarize(rows):
+        from collections import Counter
+        counts = Counter(row['status'] for row in rows)
+        return " | ".join(f"{status}: {count}" for status, count in counts.items())

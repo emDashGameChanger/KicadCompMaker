@@ -1,0 +1,186 @@
+(kicad_symbol_lib
+	(version 20231120)
+	(generator "emDashGameChanger's capcitor-through hole-radial generator")
+	(generator_version "0.1")
+
+(symbol "CP_10uF_50V"
+    (pin_numbers hide)
+    (pin_names
+        (offset 0.254)
+        (hide yes)
+    )
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "C"
+        (at 0.254 1.778 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (justify left)
+        )
+    )
+    (property "Value" "10 µF"
+        (at 0.254 -2.032 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (justify left)
+        )
+    )
+    (property "Footprint" "CP_TH_emDashGameChanger:CP_D5.00mm_P2.00mm_H12.50mm"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Datasheet" "https://www.we-online.com/components/products/datasheet/860020672010.pdf"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Voltage" "50 V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "732-8856-1-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "860020672010"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.11"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±20%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Polarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "ki_keywords" "cap capacitor"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "ki_fp_filters" "CP_*"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (symbol "CP_10uF_50V_1_1"
+        (polyline
+            (pts
+                (xy -1.4 0.508)
+                (xy 1.4 0.508)
+            )
+            (stroke
+                (width 0.254)
+                (type default)
+            )
+            (fill
+                (type none)
+            )
+        )
+        (polyline
+            (pts
+                (xy -1.4 -0.508)
+                (xy 1.4 -0.508)
+            )
+            (stroke
+                (width 0.254)
+                (type default)
+            )
+            (fill
+                (type none)
+            )
+        )
+        (polyline
+            (pts
+                (xy -2.2 1.5)
+                (xy -1.2 1.5)
+            )
+            (stroke
+                (width 0.2)
+                (type default)
+            )
+            (fill
+                (type none)
+            )
+        )
+        (polyline
+            (pts
+                (xy -1.7 1.0)
+                (xy -1.7 2.0)
+            )
+            (stroke
+                (width 0.2)
+                (type default)
+            )
+            (fill
+                (type none)
+            )
+        )
+        (pin passive line (at 0 3.048 270) (length 2.54)
+            (name "~" (effects (font (size 1.27 1.27))))
+            (number "1" (effects (font (size 1.27 1.27))))
+        )
+        (pin passive line (at 0 -3.048 90) (length 2.54)
+            (name "~" (effects (font (size 1.27 1.27))))
+            (number "2" (effects (font (size 1.27 1.27))))
+        )
+    )
+)
+)

@@ -32,6 +32,7 @@ def process_resistor(product_json):
     tolerance = "Unknown"
     power = "Unknown"
     dims_raw = "Unknown"
+    composition = "Unknown"
     
     for p in params:
         pid = p.get("ParameterId")
@@ -39,13 +40,17 @@ def process_resistor(product_json):
         elif pid == 3: tolerance = p.get("ValueText", "Unknown")
         elif pid == 2: power = p.get("ValueText", "Unknown")
         elif pid == 46: dims_raw = p.get("ValueText", "Unknown")
+        elif pid == 174: composition = p.get("ValueText", "Unknown")
 
     # Processing
     om = "\u03A9"
     resistance = resistance.replace("Ohms", om)
     tol_clean = tolerance.replace("±", "").replace("+-", "").strip()
     power_clean = power.replace(" ", "")
-    symbol_name = f"R_{resistance}_{power_clean}_{tol_clean}"
+    if "Metal Film" in composition:
+        symbol_name = f"R_MFilm_{resistance}_{power_clean}_{tol_clean}"
+    else:
+        symbol_name = f"R_{resistance}_{power_clean}_{tol_clean}"
     
     diameter = 0.0
     length = 0.0
@@ -100,7 +105,7 @@ def process_resistor(product_json):
     
     return processed_data
 
-def search_tht_resistor(resistance, power_idx, tolerance_idx, access_token, client_id, token_refresher=None):
+def search_tht_resistor(resistance, power_idx, tolerance_idx, comp_idx, access_token, client_id, token_refresher=None):
     # Format Resistance Value
     res_val = resistance.strip()
     if res_val.lower().endswith('k'):
@@ -128,6 +133,13 @@ def search_tht_resistor(resistance, power_idx, tolerance_idx, access_token, clie
     }
     tol_val = tol_map.get(tolerance_idx, "2503")
 
+    # Composition Mapping
+    comp_map = {
+        0: "374915", # Metal Film
+        1: "326532"  # Carbon Film
+    }
+    comp_val = comp_map.get(comp_idx, "374915")
+
     url = "https://api.digikey.com/products/v4/search/keyword"
     payload = {
         "Keywords": "resistor",
@@ -143,7 +155,8 @@ def search_tht_resistor(resistance, power_idx, tolerance_idx, access_token, clie
                 "ParameterFilters": [
                     {"ParameterID": 2085, "FilterValues": [{"Id": res_str}]},
                     {"ParameterId": 3, "FilterValues": [{"Id": tol_val}]},
-                    {"ParameterId": 2, "FilterValues": [{"Id": pwr_val}]}
+                    {"ParameterId": 2, "FilterValues": [{"Id": pwr_val}]},
+                    {"ParameterId": 174, "FilterValues": [{"Id": comp_val}]}
                 ]
             },
             "SearchOptions": ["NormallyStocking"]

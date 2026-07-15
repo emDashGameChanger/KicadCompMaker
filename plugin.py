@@ -1,4 +1,12 @@
-import pcbnew
+#!/usr/bin/env python3
+
+try:
+    import pcbnew
+except ImportError:
+    class pcbnew:
+        class ActionPlugin:
+            def register(self): pass
+
 import os
 import wx
 import requests
@@ -6,10 +14,18 @@ import json
 import time
 import jinja2
 import wx.lib.delayedresult as delayedresult
-from .gui import DigikeyDialog, ProgressCounterDialog, ResultDialog, CredentialsDialog
-from .TH_Resistors import process_resistor, search_tht_resistor
-from .TH_Radial_ElectrolyticCapacitors import process_capacitor, search_tht_capacitor
-from .TH_Disc_Capacitors import search_tht_disc_capacitor, process_disc_capacitor
+try:
+    from .gui import DigikeyDialog, ProgressCounterDialog, ResultDialog, CredentialsDialog, BatchResultDialog
+    from .TH_Resistors import process_resistor, search_tht_resistor
+    from .TH_Radial_ElectrolyticCapacitors import process_capacitor, search_tht_capacitor
+    from .TH_Disc_Capacitors import search_tht_disc_capacitor, process_disc_capacitor
+    from .BatchImport import run_batch, CAP_TAB_CONFIGS
+except ImportError:
+    from gui import DigikeyDialog, ProgressCounterDialog, ResultDialog, CredentialsDialog, BatchResultDialog
+    from TH_Resistors import process_resistor, search_tht_resistor
+    from TH_Radial_ElectrolyticCapacitors import process_capacitor, search_tht_capacitor
+    from TH_Disc_Capacitors import search_tht_disc_capacitor, process_disc_capacitor
+    from BatchImport import run_batch, CAP_TAB_CONFIGS
 
 def generate_library_files(data):
     # Debug: Display variables
@@ -66,7 +82,7 @@ def generate_library_files(data):
             if not os.path.exists(lib_path):
                 with open(lib_path, 'w') as f:
                     f.write(sym_preamble + ")")
-            
+
             with open(lib_path, 'r+') as f:
                 content = f.read()
                 if f'(symbol "{symbol_name}"' not in content:
@@ -76,29 +92,36 @@ def generate_library_files(data):
                         f.seek(0)
                         f.write(new_content)
                         f.truncate()
+                        return True
+            return False
 
         # Write to global library
-        append_to_lib(sym_lib_file, rendered_sym)
-        
+        appended_global = append_to_lib(sym_lib_file, rendered_sym)
+
         # Write to local plugin folder
         local_sym_lib_file = os.path.join(plugin_dir, f"{sym_lib_name}.kicad_sym")
-        append_to_lib(local_sym_lib_file, rendered_sym)
+        appended_local = append_to_lib(local_sym_lib_file, rendered_sym)
 
     except Exception as e:
         return False, f"Symbol Error: {e}"
 
-    return True, f"Generated: {symbol_name}"
+    # NOTE: callers (e.g. BatchImport.run_batch) key off this exact "Already exists:" prefix
+    # to classify a line as a duplicate vs. a new part - keep the prefix stable.
+    if appended_global or appended_local:
+        return True, f"Generated: {symbol_name}"
+    return True, f"Already exists: {symbol_name}"
 
 class DigikeyPlugin(pcbnew.ActionPlugin):
     def __init__(self):
         pcbnew.ActionPlugin.__init__(self)
         # Initialize state with defaults (Index 0 for both)
-        self.state = {'pwr_idx': 0, 'tol_idx': 0, 'film_vol_idx': 6}
+        self.state = {'pwr_idx': 0, 'tol_idx': 0, 'film_vol_idx': 6, 'res_comp_idx': 0}
         self.client_id = None
         self.client_secret = None
         self.progress_dialog = None
         self.token = None
         self.token_time = 0
+        self.dlg = None
 
     def defaults(self):
         """
@@ -121,72 +144,98 @@ class DigikeyPlugin(pcbnew.ActionPlugin):
             return  # User cancelled or failed to provide credentials
 
         pcbnew_window = wx.FindWindowByName("PcbFrame")
-        dlg = DigikeyDialog(pcbnew_window, self.state)
-        if dlg.ShowModal() == wx.ID_OK:
-            # Save Tab States
-            self.state['main_tab'] = dlg.notebook.GetSelection()
-            self.state['tht_tab'] = dlg.tht_notebook.GetSelection()
-            self.state['cap_tab'] = dlg.tht_cap_notebook.GetSelection()
+        self.dlg = DigikeyDialog(pcbnew_window, self.state)
+        
+        # Change OK button to "Search" and bind to keep dialog open
+        btn_ok = self.dlg.FindWindow(wx.ID_OK)
+        if btn_ok:
+            btn_ok.SetLabel("Search")
+            self.dlg.Bind(wx.EVT_BUTTON, self.on_search_click, id=wx.ID_OK)
 
-            # Save the state of Power Rating
-            for i, rb in enumerate(dlg.tht_res_pwr_radios):
-                if rb.GetValue():
-                    self.state['pwr_idx'] = i
-            
-            # Save the state of Tolerance
-            for i, rb in enumerate(dlg.tht_res_tol_radios):
-                if rb.GetValue():
-                    self.state['tol_idx'] = i
-            
-            # Save Capacitor States
-            for key, controls in dlg.cap_tabs.items():
-                for i, rb in enumerate(controls['type']):
-                    if rb.GetValue(): self.state[f'{key}_type_idx'] = i
-                for i, rb in enumerate(controls['vol']):
-                    if rb.GetValue(): self.state[f'{key}_vol_idx'] = i
-            
-            # Trigger Search
-            # Check which tab is active
-            if dlg.notebook.GetSelection() == 0: # Through Hole
-                if dlg.tht_notebook.GetSelection() == 0: # Resistors
-                    res_val = dlg.tht_res_val.GetValue()
-                    if res_val:
-                        self.progress_dialog = ProgressCounterDialog(pcbnew_window, "API Call", "Searching for resistors...")
-                        self.progress_dialog.Show()
-                        delayedresult.startWorker(self._on_api_result_resistor, self._api_worker_resistor, 
-                                                  wargs=[res_val, self.state['pwr_idx'], self.state['tol_idx']])
+        self.dlg.ShowModal()
+        self.dlg.Destroy()
+        self.dlg = None
 
-                elif dlg.tht_notebook.GetSelection() == 1: # Capacitors
-                    sel = dlg.tht_cap_notebook.GetSelection()
-                    tab_keys = ['alum', 'film', 'mica']
-                    if sel < len(tab_keys):
-                        key = tab_keys[sel]
-                        controls = dlg.cap_tabs[key]
+    def on_search_click(self, event):
+        dlg = self.dlg
+        
+        # Save Tab States
+        self.state['main_tab'] = dlg.notebook.GetSelection()
+        self.state['tht_tab'] = dlg.tht_notebook.GetSelection()
+        self.state['cap_tab'] = dlg.tht_cap_notebook.GetSelection()
+
+        # Save the state of Power Rating
+        for i, rb in enumerate(dlg.tht_res_pwr_radios):
+            if rb.GetValue():
+                self.state['pwr_idx'] = i
+        
+        # Save the state of Tolerance
+        for i, rb in enumerate(dlg.tht_res_tol_radios):
+            if rb.GetValue():
+                self.state['tol_idx'] = i
+        
+        # Save the state of Composition
+        for i, rb in enumerate(dlg.tht_res_comp_radios):
+            if rb.GetValue():
+                self.state['res_comp_idx'] = i
+        
+        # Save Capacitor States
+        for key, controls in dlg.cap_tabs.items():
+            for i, rb in enumerate(controls['type']):
+                if rb.GetValue(): self.state[f'{key}_type_idx'] = i
+            for i, rb in enumerate(controls['vol']):
+                if rb.GetValue(): self.state[f'{key}_vol_idx'] = i
+        
+        # Trigger Search
+        # Check which tab is active
+        if dlg.notebook.GetSelection() == 0: # Through Hole
+            if dlg.tht_notebook.GetSelection() == 0: # Resistors
+                res_val = dlg.tht_res_val.GetValue()
+                if res_val:
+                    self.progress_dialog = ProgressCounterDialog(dlg, "API Call", "Searching for resistors...")
+                    self.progress_dialog.Show()
+                    delayedresult.startWorker(self._on_api_result_resistor, self._api_worker_resistor, 
+                                              wargs=[res_val, self.state['pwr_idx'], self.state['tol_idx'], self.state['res_comp_idx']])
+
+            elif dlg.tht_notebook.GetSelection() == 1: # Capacitors
+                sel = dlg.tht_cap_notebook.GetSelection()
+                tab_keys = ['alum', 'film', 'mica']
+                if sel < len(tab_keys):
+                    key = tab_keys[sel]
+                    controls = dlg.cap_tabs[key]
+                    
+                    cap_val = controls['val'].GetValue()
+                    if cap_val:
+                        cap_val = cap_val.replace("u", "µ")
+                        vol_idx = self.state.get(f'{key}_vol_idx', 0)
+                        vol_str = controls['vol_opts'][vol_idx]
+                        cust_vol = controls['cust_vol'].GetValue()
+                        if cust_vol: vol_str = cust_vol
                         
-                        cap_val = controls['val'].GetValue()
-                        if cap_val:
-                            cap_val = cap_val.replace("u", "µ")
-                            vol_idx = self.state.get(f'{key}_vol_idx', 0)
-                            vol_str = controls['vol_opts'][vol_idx]
-                            cust_vol = controls['cust_vol'].GetValue()
-                            if cust_vol: vol_str = cust_vol
-                            
-                            type_idx = self.state.get(f'{key}_type_idx', 0)
-                            
-                            # Configs
-                            configs = {
-                                'alum': ('58', {'designator': 'CP', 'sym_lib': 'CP_TH_emDashGameChanger', 'proc': 'alum'}),
-                                'film': ('60', {'designator': 'C', 'sym_lib': 'C_TH_emDashGameChanger', 'proc': 'disc'}),
-                                'mica': ('61', {'designator': 'C', 'sym_lib': 'C_TH_emDashGameChanger', 'proc': 'disc'})
-                            }
-                            cat_id, lib_config = configs.get(key, ('58', {}))
+                        type_idx = self.state.get(f'{key}_type_idx', 0)
 
-                            self.progress_dialog = ProgressCounterDialog(pcbnew_window, "API Call", "Searching for capacitors...")
-                            self.progress_dialog.Show()
-                            delayedresult.startWorker(self._on_api_result_capacitor, self._api_worker_capacitor, 
-                                                      wargs=[cap_val, vol_str, type_idx, cat_id], cargs=[lib_config])
+                        # Configs (shared with BatchImport.py so both search paths agree)
+                        cat_id, base_lib_config = CAP_TAB_CONFIGS.get(key, ('58', {}))
+                        lib_config = dict(base_lib_config)
 
-        dlg.Destroy()
+                        if key == 'film':
+                            if type_idx == 1: # Film
+                                lib_config['is_film'] = True
+
+                        self.progress_dialog = ProgressCounterDialog(dlg, "API Call", "Searching for capacitors...")
+                        self.progress_dialog.Show()
+                        delayedresult.startWorker(self._on_api_result_capacitor, self._api_worker_capacitor,
+                                                  wargs=[cap_val, vol_str, type_idx, cat_id], cargs=[lib_config])
+
+        elif dlg.notebook.GetSelection() == 2: # Batch Import
+            batch_text = dlg.batch_text.GetValue()
+            if batch_text.strip():
+                self.progress_dialog = ProgressCounterDialog(dlg, "API Call", "Running batch import...")
+                self.progress_dialog.Show()
+                delayedresult.startWorker(self._on_api_result_batch, self._api_worker_batch,
+                                          wargs=[batch_text])
+            else:
+                wx.MessageBox("Batch text is empty.", "Info", wx.OK | wx.ICON_INFORMATION, parent=dlg)
 
     def _ensure_credentials(self):
         # If already loaded, do nothing.
@@ -253,10 +302,10 @@ class DigikeyPlugin(pcbnew.ActionPlugin):
                 return dlg.get_credentials()
         return None, None
 
-    def _api_worker_resistor(self, res_val, pwr_idx, tol_idx):
+    def _api_worker_resistor(self, res_val, pwr_idx, tol_idx, comp_idx):
         token = self.get_token()
         if token:
-            return search_tht_resistor(res_val, pwr_idx, tol_idx, token, self.client_id, lambda: self.get_token(force_refresh=True))
+            return search_tht_resistor(res_val, pwr_idx, tol_idx, comp_idx, token, self.client_id, lambda: self.get_token(force_refresh=True))
         return None
 
     def _on_api_result_resistor(self, delayedResult):
@@ -266,23 +315,24 @@ class DigikeyPlugin(pcbnew.ActionPlugin):
 
         try:
             results = delayedResult.get()
+            parent = self.dlg if self.dlg else wx.FindWindowByName("PcbFrame")
             if results and results.get("ProductsCount", 0) > 0:
-                pcbnew_window = wx.FindWindowByName("PcbFrame")
-                res_dlg = ResultDialog(pcbnew_window, results, processor=process_resistor, generator_callback=generate_library_files)
+                res_dlg = ResultDialog(parent, results, processor=process_resistor, generator_callback=generate_library_files)
                 res_dlg.ShowModal()
                 res_dlg.Destroy()
             elif results is None:
-                wx.MessageBox("API call failed. This could be due to an authentication issue.", "API Error", wx.OK | wx.ICON_ERROR)
+                wx.MessageBox("API call failed. This could be due to an authentication issue.", "API Error", wx.OK | wx.ICON_ERROR, parent=parent)
             else: # results is not None but no products
-                wx.MessageBox("No results found for the specified criteria.", "Info", wx.OK | wx.ICON_INFORMATION)
+                wx.MessageBox("No results found for the specified criteria.", "Info", wx.OK | wx.ICON_INFORMATION, parent=parent)
         except Exception as e:
-            wx.MessageBox(f"API Error: {e}", "Error", wx.OK | wx.ICON_ERROR)
+            parent = self.dlg if self.dlg else wx.FindWindowByName("PcbFrame")
+            wx.MessageBox(f"API Error: {e}", "Error", wx.OK | wx.ICON_ERROR, parent=parent)
 
     def _api_worker_capacitor(self, cap_val, vol_str, type_idx, cat_id):
         token = self.get_token()
         if token:
             if cat_id == '60':
-                return search_tht_disc_capacitor(cap_val, vol_str, cat_id, token, self.client_id, lambda: self.get_token(force_refresh=True))
+                return search_tht_disc_capacitor(cap_val, vol_str, cat_id, token, self.client_id, lambda: self.get_token(force_refresh=True), type_idx=type_idx)
             return search_tht_capacitor(cap_val, vol_str, type_idx, cat_id, token, self.client_id, lambda: self.get_token(force_refresh=True))
         return None
 
@@ -293,8 +343,8 @@ class DigikeyPlugin(pcbnew.ActionPlugin):
 
         try:
             results = delayedResult.get()
+            parent = self.dlg if self.dlg else wx.FindWindowByName("PcbFrame")
             if results and results.get("ProductsCount", 0) > 0:
-                pcbnew_window = wx.FindWindowByName("PcbFrame")
                 
                 proc_type = lib_config.get('proc', 'alum') if lib_config else 'alum'
                 if proc_type == 'disc':
@@ -302,15 +352,44 @@ class DigikeyPlugin(pcbnew.ActionPlugin):
                 else:
                     processor = lambda p: process_capacitor(p, lib_config)
 
-                res_dlg = ResultDialog(pcbnew_window, results, processor=processor, generator_callback=generate_library_files)
+                res_dlg = ResultDialog(parent, results, processor=processor, generator_callback=generate_library_files)
                 res_dlg.ShowModal()
                 res_dlg.Destroy()
             elif results is None:
-                wx.MessageBox("API call failed. This could be due to an authentication issue.", "API Error", wx.OK | wx.ICON_ERROR)
+                wx.MessageBox("API call failed. This could be due to an authentication issue.", "API Error", wx.OK | wx.ICON_ERROR, parent=parent)
             else: # results is not None but no products
-                wx.MessageBox("No results found for the specified criteria.", "Info", wx.OK | wx.ICON_INFORMATION)
+                wx.MessageBox("No results found for the specified criteria.", "Info", wx.OK | wx.ICON_INFORMATION, parent=parent)
         except Exception as e:
-            wx.MessageBox(f"API Error: {e}", "Error", wx.OK | wx.ICON_ERROR)
+            parent = self.dlg if self.dlg else wx.FindWindowByName("PcbFrame")
+            wx.MessageBox(f"API Error: {e}", "Error", wx.OK | wx.ICON_ERROR, parent=parent)
+
+    def _api_worker_batch(self, batch_text):
+        token = self.get_token()
+        if token is None:
+            return None
+        return run_batch(batch_text, token, self.client_id,
+                          lambda: self.get_token(force_refresh=True), generate_library_files)
+
+    def _on_api_result_batch(self, delayedResult):
+        if self.progress_dialog:
+            self.progress_dialog.Destroy()
+            self.progress_dialog = None
+
+        try:
+            report_rows = delayedResult.get()
+            parent = self.dlg if self.dlg else wx.FindWindowByName("PcbFrame")
+            if report_rows is None:
+                wx.MessageBox("API call failed. This could be due to an authentication issue.", "API Error", wx.OK | wx.ICON_ERROR, parent=parent)
+                return
+            if not report_rows:
+                wx.MessageBox("No valid batch lines found.", "Info", wx.OK | wx.ICON_INFORMATION, parent=parent)
+                return
+            res_dlg = BatchResultDialog(parent, report_rows)
+            res_dlg.ShowModal()
+            res_dlg.Destroy()
+        except Exception as e:
+            parent = self.dlg if self.dlg else wx.FindWindowByName("PcbFrame")
+            wx.MessageBox(f"Batch Error: {e}", "Error", wx.OK | wx.ICON_ERROR, parent=parent)
 
     def get_token(self, force_refresh=False):
         if not force_refresh and self.token and (time.time() - self.token_time < 300):
@@ -331,3 +410,12 @@ class DigikeyPlugin(pcbnew.ActionPlugin):
         else:
             print(f"Token Error: {response.text}")
             return None
+
+import sys
+
+# This allows the script to run outside of KiCad
+if __name__ == "__main__":
+    app = wx.App(False)
+    plugin = DigikeyPlugin()
+    plugin.Run()
+    app.MainLoop()

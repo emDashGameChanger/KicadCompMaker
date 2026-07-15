@@ -1,0 +1,2581 @@
+(kicad_symbol_lib
+	(version 20231120)
+	(generator "emDashGameChanger's capacitor-disc generator")
+	(generator_version "0.1")
+
+(symbol "C_1000pF_50V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "1000pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_D3.60mm_W2.30mm_P5.00mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://www.vishay.com/docs/45171/kseries.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "50V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "BC2659CT-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "K102K10X7RF5UH5"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.21"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±10%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_1000pF_50V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_0.015µF_50V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "0.015µF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_D3.60mm_W2.30mm_P5.00mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://www.vishay.com/docs/45171/kseries.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "50V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "BC2671CT-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "K153K10X7RF5UH5"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.2"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±10%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_0.015µF_50V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_0.082µF_50V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "0.082µF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_D3.81mm_W2.54mm_P2.54mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://content.kemet.com/datasheets/KEM_C1050_GOLDMAX_X7R.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "50V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "399-C315C823K5R5TA-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "C315C823K5R5TA"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.34"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±10%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_0.082µF_50V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_Film_0.015µF_250V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "0.015µF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_Film_L0.0mm_W3.0mm_P7.50mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://industrial.panasonic.com/cdbs/www-data/pdf/RDI0000/ABD0000C179.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "250V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "EF2153-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "ECQ-E2153KF"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.39"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±10%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_Film_0.015µF_250V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_Film_1000pF_220V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "1000pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_Film_L0.0mm_W3.0mm_P5.08mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://www.vishay.com/docs/28108/mkt370.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "220V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "BC5089CT-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "BFC237065102"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.5"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±10%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_Film_1000pF_220V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_Film_10000pF_63V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "10000pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_Film_L0.0mm_W3.0mm_P5.00mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://content.kemet.com/datasheets/KEM_F3067_RSB.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "63V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "399-RSBEC2100CK00KTR-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "RSBEC2100CK00K"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.31"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±10%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_Film_10000pF_63V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_Film_0.082µF_250V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "0.082µF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_Film_L0.0mm_W3.0mm_P7.50mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://industrial.panasonic.com/cdbs/www-data/pdf/RDI0000/ABD0000C179.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "250V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "EF2823-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "ECQ-E2823KF"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.33"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±10%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_Film_0.082µF_250V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_220pF_50V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "220pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_D3.60mm_W2.30mm_P5.00mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://www.vishay.com/docs/45171/kseries.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "50V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "BC2672CT-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "K221K10X7RF5UH5"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.2"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±10%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_220pF_50V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_Film_0.047µF_250V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "0.047µF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_Film_L0.0mm_W3.0mm_P7.50mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://industrial.panasonic.com/cdbs/www-data/pdf/RDI0000/ABD0000C179.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "250V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "EF2473-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "ECQ-E2473KF"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.36"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±10%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_Film_0.047µF_250V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_Film_0.012µF_250V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "0.012µF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_Film_L0.0mm_W3.0mm_P7.50mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://industrial.panasonic.com/cdbs/www-data/pdf/RDI0000/ABD0000C179.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "250V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "EF2123-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "ECQ-E2123KF"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.37"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±10%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_Film_0.012µF_250V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_Film_2700pF_220V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "2700pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_Film_L0.0mm_W3.0mm_P10.00mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://www.vishay.com/docs/28105/mkt467-mkt468.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "220V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "BFC246728272-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "BFC246728272"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.83"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±10%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_Film_2700pF_220V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_Film_4700pF_220V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "4700pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_Film_L0.0mm_W3.0mm_P5.08mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://www.vishay.com/docs/28108/mkt370.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "220V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "BC1675-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "BFC237051472"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.66"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±10%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_Film_4700pF_220V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_Film_0.033µF_250V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "0.033µF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_Film_L0.0mm_W3.0mm_P7.50mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://industrial.panasonic.com/cdbs/www-data/pdf/RDI0000/ABD0000C179.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "250V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "EF2333-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "ECQ-E2333KF"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.37"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±10%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_Film_0.033µF_250V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_82pF_50V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "82pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_D4.00mm_W2.60mm_P5.00mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://www.vishay.com/docs/45171/kseries.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "50V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "BC1041TR-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "K820J15C0GF5TH5"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.24"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±5%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_82pF_50V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+)
