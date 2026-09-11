@@ -33,7 +33,7 @@ def generate_library_files(data):
     print(json.dumps(data, indent=4, default=str))
 
     # Paths
-    plugin_dir = os.path.dirname(__file__)
+    plugin_dir = os.path.dirname(os.path.realpath(__file__))
     
     fp_lib_name = data.get("fp_lib_name", "Digikey_Import_FP")
     sym_lib_name = data.get("sym_lib_name", "Digikey_Import")
@@ -133,8 +133,9 @@ class DigikeyPlugin(pcbnew.ActionPlugin):
         self.show_toolbar_button = True # This places the button on the top toolbar
         
         # Set the icon file path
-        # We use os.path.dirname(__file__) to ensure we look in the plugin's folder
-        self.icon_file_name = os.path.join(os.path.dirname(__file__), 'icon.png')
+        # Use realpath so this resolves correctly even when invoked via a symlink
+        # (e.g. the ~/.local/bin/kicadcompmaker desktop launcher)
+        self.icon_file_name = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'icon.png')
 
     def Run(self):
         """
@@ -249,8 +250,9 @@ class DigikeyPlugin(pcbnew.ActionPlugin):
             return True
 
         # Fallback: Try to load from config.json
-        # config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.json')
-        PLUGIN_DIR = os.path.dirname(os.path.abspath(__file__))
+        # realpath (not just abspath) so this resolves correctly even when invoked via a
+        # symlink (e.g. the ~/.local/bin/kicadcompmaker desktop launcher)
+        PLUGIN_DIR = os.path.dirname(os.path.realpath(__file__))
         config_path = os.path.join(PLUGIN_DIR, "config.json")
         if os.path.exists(config_path):
             try:
