@@ -15,6 +15,7 @@
     - `gui.py` — all `wx` dialogs: `DigikeyDialog` (main tabbed search form), `ResultDialog` / `BatchResultDialog` (results + report), `CredentialsDialog`, `JsonViewDialog`, `ProgressCounterDialog`.
     - `TH_Resistors.py`, `TH_Radial_ElectrolyticCapacitors.py`, `TH_Disc_Capacitors.py` — one module per component type. Each exposes a `search_tht_*` (Digikey product search) and `process_*`/`process_disc_capacitor` (turns a chosen product JSON into symbol/footprint data, including procedurally generating footprint polygons for the electrolytic can silkscreen in `generate_capacitor_polygons`).
     - `DigikeyVoltageMap.py` — maps arbitrary voltage strings to Digikey's internal `ValueId`s for filtering (`parse_voltage_volts`, `lookup_value_id`).
+    - `DigikeyPartNumber.py` — `pick_digikey_pn`, the shared rule every generator uses to choose which `ProductVariations` part number goes on the symbol: lowest minimum order quantity first, Cut Tape on a tie (so a reel-only number with a 60k MOQ never beats a Bulk or Cut Tape option).
     - `BatchImport.py` — batch-mode spec parser (`parse_batch_text`, `BatchSpec`) and runner (`run_batch`), independent of the GUI so it's testable/callable on its own.
     - `symbolTemplates/`, `footprintTemplates/` — Jinja2 templates `generate_library_files` renders into the final `.kicad_sym` / footprint output.
     - A generated `code_map.md` at the repo root has full file-by-file function/class listings if you need exact line numbers — regenerate it rather than trusting it as line numbers drift.

@@ -11,7 +11,7 @@
         (at 0.254 1.778 0)
         (effects
             (font
-                (size 1.27 1.27)
+                (size 0.84 0.84)
             )
             (justify left)
         )
@@ -20,7 +20,7 @@
         (at 0.254 -2.032 0)
         (effects
             (font
-                (size 1.27 1.27)
+                (size 0.84 0.84)
             )
             (justify left)
         )
@@ -168,11 +168,11 @@
                 (type none)
             )
         )
-        (pin passive line (at 0 3.048 270) (length 2.54)
+        (pin passive line (at 0 2.54 270) (length 2.032)
             (name "~" (effects (font (size 1.27 1.27))))
             (number "1" (effects (font (size 1.27 1.27))))
         )
-        (pin passive line (at 0 -3.048 90) (length 2.54)
+        (pin passive line (at 0 -2.54 90) (length 2.032)
             (name "~" (effects (font (size 1.27 1.27))))
             (number "2" (effects (font (size 1.27 1.27))))
         )

@@ -15,16 +15,24 @@ import time
 import jinja2
 import wx.lib.delayedresult as delayedresult
 try:
-    from .gui import DigikeyDialog, ProgressCounterDialog, ResultDialog, CredentialsDialog, BatchResultDialog
+    from .gui import DigikeyDialog, ProgressCounterDialog, ResultDialog, CredentialsDialog, BatchResultDialog, PinoutConfirmDialog
     from .TH_Resistors import process_resistor, search_tht_resistor
     from .TH_Radial_ElectrolyticCapacitors import process_capacitor, search_tht_capacitor
     from .TH_Disc_Capacitors import search_tht_disc_capacitor, process_disc_capacitor
+    from .TH_Diodes import process_diode, search_tht_diode
+    from .TH_Transistors_BJT import process_bjt, search_tht_bjt
+    from .TH_Transistors_JFET import process_jfet, search_tht_jfet
+    from .TH_Transistors_MOSFET import process_mosfet, search_tht_mosfet
     from .BatchImport import run_batch, CAP_TAB_CONFIGS
 except ImportError:
-    from gui import DigikeyDialog, ProgressCounterDialog, ResultDialog, CredentialsDialog, BatchResultDialog
+    from gui import DigikeyDialog, ProgressCounterDialog, ResultDialog, CredentialsDialog, BatchResultDialog, PinoutConfirmDialog
     from TH_Resistors import process_resistor, search_tht_resistor
     from TH_Radial_ElectrolyticCapacitors import process_capacitor, search_tht_capacitor
     from TH_Disc_Capacitors import search_tht_disc_capacitor, process_disc_capacitor
+    from TH_Diodes import process_diode, search_tht_diode
+    from TH_Transistors_BJT import process_bjt, search_tht_bjt
+    from TH_Transistors_JFET import process_jfet, search_tht_jfet
+    from TH_Transistors_MOSFET import process_mosfet, search_tht_mosfet
     from BatchImport import run_batch, CAP_TAB_CONFIGS
 
 def generate_library_files(data):
@@ -42,7 +50,7 @@ def generate_library_files(data):
     sym_lib_file = os.path.expanduser(f"~/.local/share/kicad/9.0/symbols/{sym_lib_name}.kicad_sym")
     
     # Ensure directories exist
-    if not os.path.exists(fp_lib_path):
+    if not data.get("skip_footprint_gen") and not os.path.exists(fp_lib_path):
         os.makedirs(fp_lib_path)
     if not os.path.exists(os.path.dirname(sym_lib_file)):
         os.makedirs(os.path.dirname(sym_lib_file))
@@ -50,22 +58,24 @@ def generate_library_files(data):
     # Jinja2 Setup
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(plugin_dir))
     
-    # 1. Footprint Generation
-    fp_name = data['footprint_name']
-    fp_file_path = os.path.join(fp_lib_path, fp_name)
-    fp_template_file = data.get("fp_template", "footprintTemplates/TH_ResistorTemplate.kicad_mod")
-    
-    try:
-        template = env.get_template(fp_template_file)
-        rendered_fp = template.render(data['Footprint Data'])
-        
-        # Write to global library
-        if not os.path.exists(fp_file_path):
-            with open(fp_file_path, 'w') as f:
-                f.write(rendered_fp)
-            
-    except Exception as e:
-        return False, f"Footprint Error: {e}"
+    # 1. Footprint Generation - skipped when a stock KiCad footprint is reused by
+    # reference instead (e.g. diodes pointing at Diode_THT:<name>)
+    if not data.get("skip_footprint_gen"):
+        fp_name = data['footprint_name']
+        fp_file_path = os.path.join(fp_lib_path, fp_name)
+        fp_template_file = data.get("fp_template", "footprintTemplates/TH_ResistorTemplate.kicad_mod")
+
+        try:
+            template = env.get_template(fp_template_file)
+            rendered_fp = template.render(data['Footprint Data'])
+
+            # Write to global library
+            if not os.path.exists(fp_file_path):
+                with open(fp_file_path, 'w') as f:
+                    f.write(rendered_fp)
+
+        except Exception as e:
+            return False, f"Footprint Error: {e}"
 
     # 2. Symbol Generation
     sym_data = data['Symbol Data']
@@ -186,7 +196,40 @@ class DigikeyPlugin(pcbnew.ActionPlugin):
                 if rb.GetValue(): self.state[f'{key}_type_idx'] = i
             for i, rb in enumerate(controls['vol']):
                 if rb.GetValue(): self.state[f'{key}_vol_idx'] = i
-        
+
+        # Save Diode States
+        self.state['diode_pn'] = dlg.tht_diode_pn.GetValue()
+        for i, rb in enumerate(dlg.tht_diode_type_radios):
+            if rb.GetValue(): self.state['diode_type_idx'] = i
+        pick_sel = dlg.tht_diode_type_pick.GetSelection()
+        if pick_sel != wx.NOT_FOUND:
+            self.state['diode_type_idx'] = len(dlg.tht_diode_type_radios) + pick_sel
+        for i, rb in enumerate(dlg.tht_diode_tech_radios):
+            if rb.GetValue(): self.state['diode_tech_idx'] = i
+        for i, rb in enumerate(dlg.tht_diode_pkg_radios):
+            if rb.GetValue(): self.state['diode_pkg_idx'] = i
+
+        # Save Transistor States
+        self.state['transistor_tab'] = dlg.tht_transistor_notebook.GetSelection()
+        bjt_controls = dlg.transistor_tabs['bjt']
+        self.state['transistor_bjt_pn'] = bjt_controls['pn'].GetValue()
+        for i, rb in enumerate(bjt_controls['polarity']):
+            if rb.GetValue(): self.state['transistor_bjt_polarity_idx'] = i
+        for i, rb in enumerate(bjt_controls['pkg']):
+            if rb.GetValue(): self.state['transistor_bjt_pkg_idx'] = i
+        jfet_controls = dlg.transistor_tabs['jfet']
+        self.state['transistor_jfet_pn'] = jfet_controls['pn'].GetValue()
+        for i, rb in enumerate(jfet_controls['polarity']):
+            if rb.GetValue(): self.state['transistor_jfet_polarity_idx'] = i
+        for i, rb in enumerate(jfet_controls['pkg']):
+            if rb.GetValue(): self.state['transistor_jfet_pkg_idx'] = i
+        mosfet_controls = dlg.transistor_tabs['mosfet']
+        self.state['transistor_mosfet_pn'] = mosfet_controls['pn'].GetValue()
+        for i, rb in enumerate(mosfet_controls['polarity']):
+            if rb.GetValue(): self.state['transistor_mosfet_polarity_idx'] = i
+        for i, rb in enumerate(mosfet_controls['pkg']):
+            if rb.GetValue(): self.state['transistor_mosfet_pkg_idx'] = i
+
         # Trigger Search
         # Check which tab is active
         if dlg.notebook.GetSelection() == 0: # Through Hole
@@ -227,6 +270,46 @@ class DigikeyPlugin(pcbnew.ActionPlugin):
                         self.progress_dialog.Show()
                         delayedresult.startWorker(self._on_api_result_capacitor, self._api_worker_capacitor,
                                                   wargs=[cap_val, vol_str, type_idx, cat_id], cargs=[lib_config])
+
+            elif dlg.tht_notebook.GetSelection() == 2: # Diodes
+                pn_val = dlg.tht_diode_pn.GetValue()
+                self.progress_dialog = ProgressCounterDialog(dlg, "API Call", "Searching for diodes...")
+                self.progress_dialog.Show()
+                delayedresult.startWorker(self._on_api_result_diode, self._api_worker_diode,
+                                          wargs=[pn_val, self.state.get('diode_type_idx', 0),
+                                                 self.state.get('diode_tech_idx', 0), self.state.get('diode_pkg_idx', 0)])
+
+            elif dlg.tht_notebook.GetSelection() == 3: # Transistors
+                sel = dlg.tht_transistor_notebook.GetSelection()
+                if sel == 0: # BJT
+                    bjt_controls = dlg.transistor_tabs['bjt']
+                    pn_val = bjt_controls['pn'].GetValue()
+                    polarity_idx = self.state.get('transistor_bjt_polarity_idx', 0)
+                    pkg_idx = self.state.get('transistor_bjt_pkg_idx', 0)
+                    self.progress_dialog = ProgressCounterDialog(dlg, "API Call", "Searching for transistors...")
+                    self.progress_dialog.Show()
+                    delayedresult.startWorker(self._on_api_result_transistor_bjt, self._api_worker_transistor_bjt,
+                                              wargs=[pn_val, polarity_idx, pkg_idx])
+                elif sel == 1: # JFET
+                    jfet_controls = dlg.transistor_tabs['jfet']
+                    pn_val = jfet_controls['pn'].GetValue()
+                    polarity_idx = self.state.get('transistor_jfet_polarity_idx', 0)
+                    pkg_idx = self.state.get('transistor_jfet_pkg_idx', 0)
+                    self.progress_dialog = ProgressCounterDialog(dlg, "API Call", "Searching for transistors...")
+                    self.progress_dialog.Show()
+                    delayedresult.startWorker(self._on_api_result_transistor_jfet, self._api_worker_transistor_jfet,
+                                              wargs=[pn_val, polarity_idx, pkg_idx])
+                elif sel == 2: # MOSFET
+                    mosfet_controls = dlg.transistor_tabs['mosfet']
+                    pn_val = mosfet_controls['pn'].GetValue()
+                    polarity_idx = self.state.get('transistor_mosfet_polarity_idx', 0)
+                    pkg_idx = self.state.get('transistor_mosfet_pkg_idx', 0)
+                    self.progress_dialog = ProgressCounterDialog(dlg, "API Call", "Searching for transistors...")
+                    self.progress_dialog.Show()
+                    delayedresult.startWorker(self._on_api_result_transistor_mosfet, self._api_worker_transistor_mosfet,
+                                              wargs=[pn_val, polarity_idx, pkg_idx])
+                else:
+                    wx.MessageBox("This transistor family isn't implemented yet.", "Info", wx.OK | wx.ICON_INFORMATION, parent=dlg)
 
         elif dlg.notebook.GetSelection() == 2: # Batch Import
             batch_text = dlg.batch_text.GetValue()
@@ -364,6 +447,145 @@ class DigikeyPlugin(pcbnew.ActionPlugin):
         except Exception as e:
             parent = self.dlg if self.dlg else wx.FindWindowByName("PcbFrame")
             wx.MessageBox(f"API Error: {e}", "Error", wx.OK | wx.ICON_ERROR, parent=parent)
+
+    def _api_worker_diode(self, pn_val, type_idx, tech_idx, pkg_idx):
+        token = self.get_token()
+        if token:
+            return search_tht_diode(pn_val, type_idx, tech_idx, pkg_idx, token, self.client_id, lambda: self.get_token(force_refresh=True))
+        return None
+
+    def _on_api_result_diode(self, delayedResult):
+        if self.progress_dialog:
+            self.progress_dialog.Destroy()
+            self.progress_dialog = None
+
+        try:
+            results = delayedResult.get()
+            parent = self.dlg if self.dlg else wx.FindWindowByName("PcbFrame")
+            if results and results.get("ProductsCount", 0) > 0:
+                res_dlg = ResultDialog(parent, results, processor=process_diode, generator_callback=generate_library_files)
+                res_dlg.ShowModal()
+                res_dlg.Destroy()
+            elif results is None:
+                wx.MessageBox("API call failed. This could be due to an authentication issue.", "API Error", wx.OK | wx.ICON_ERROR, parent=parent)
+            else: # results is not None but no products
+                wx.MessageBox("No results found for the specified criteria.", "Info", wx.OK | wx.ICON_INFORMATION, parent=parent)
+        except Exception as e:
+            parent = self.dlg if self.dlg else wx.FindWindowByName("PcbFrame")
+            wx.MessageBox(f"API Error: {e}", "Error", wx.OK | wx.ICON_ERROR, parent=parent)
+
+    def _api_worker_transistor_bjt(self, pn_val, polarity_idx, pkg_idx):
+        token = self.get_token()
+        if token:
+            return search_tht_bjt(pn_val, polarity_idx, pkg_idx, token, self.client_id, lambda: self.get_token(force_refresh=True))
+        return None
+
+    def _on_api_result_transistor_bjt(self, delayedResult):
+        if self.progress_dialog:
+            self.progress_dialog.Destroy()
+            self.progress_dialog = None
+
+        try:
+            results = delayedResult.get()
+            parent = self.dlg if self.dlg else wx.FindWindowByName("PcbFrame")
+            if results and results.get("ProductsCount", 0) > 0:
+                res_dlg = ResultDialog(parent, results, processor=process_bjt,
+                                       generator_callback=self._confirm_and_generate_transistor)
+                res_dlg.ShowModal()
+                res_dlg.Destroy()
+            elif results is None:
+                wx.MessageBox("API call failed. This could be due to an authentication issue.", "API Error", wx.OK | wx.ICON_ERROR, parent=parent)
+            else: # results is not None but no products
+                wx.MessageBox("No results found for the specified criteria.", "Info", wx.OK | wx.ICON_INFORMATION, parent=parent)
+        except Exception as e:
+            parent = self.dlg if self.dlg else wx.FindWindowByName("PcbFrame")
+            wx.MessageBox(f"API Error: {e}", "Error", wx.OK | wx.ICON_ERROR, parent=parent)
+
+    def _api_worker_transistor_jfet(self, pn_val, polarity_idx, pkg_idx):
+        token = self.get_token()
+        if token:
+            return search_tht_jfet(pn_val, polarity_idx, pkg_idx, token, self.client_id, lambda: self.get_token(force_refresh=True))
+        return None
+
+    def _on_api_result_transistor_jfet(self, delayedResult):
+        if self.progress_dialog:
+            self.progress_dialog.Destroy()
+            self.progress_dialog = None
+
+        try:
+            results = delayedResult.get()
+            parent = self.dlg if self.dlg else wx.FindWindowByName("PcbFrame")
+            if results and results.get("ProductsCount", 0) > 0:
+                res_dlg = ResultDialog(parent, results, processor=process_jfet,
+                                       generator_callback=self._confirm_and_generate_transistor)
+                res_dlg.ShowModal()
+                res_dlg.Destroy()
+            elif results is None:
+                wx.MessageBox("API call failed. This could be due to an authentication issue.", "API Error", wx.OK | wx.ICON_ERROR, parent=parent)
+            else: # results is not None but no products
+                wx.MessageBox("No results found for the specified criteria.", "Info", wx.OK | wx.ICON_INFORMATION, parent=parent)
+        except Exception as e:
+            parent = self.dlg if self.dlg else wx.FindWindowByName("PcbFrame")
+            wx.MessageBox(f"API Error: {e}", "Error", wx.OK | wx.ICON_ERROR, parent=parent)
+
+    def _api_worker_transistor_mosfet(self, pn_val, polarity_idx, pkg_idx):
+        token = self.get_token()
+        if token:
+            return search_tht_mosfet(pn_val, polarity_idx, pkg_idx, token, self.client_id, lambda: self.get_token(force_refresh=True))
+        return None
+
+    def _on_api_result_transistor_mosfet(self, delayedResult):
+        if self.progress_dialog:
+            self.progress_dialog.Destroy()
+            self.progress_dialog = None
+
+        try:
+            results = delayedResult.get()
+            parent = self.dlg if self.dlg else wx.FindWindowByName("PcbFrame")
+            if results and results.get("ProductsCount", 0) > 0:
+                res_dlg = ResultDialog(parent, results, processor=process_mosfet,
+                                       generator_callback=self._confirm_and_generate_transistor)
+                res_dlg.ShowModal()
+                res_dlg.Destroy()
+            elif results is None:
+                wx.MessageBox("API call failed. This could be due to an authentication issue.", "API Error", wx.OK | wx.ICON_ERROR, parent=parent)
+            else: # results is not None but no products
+                wx.MessageBox("No results found for the specified criteria.", "Info", wx.OK | wx.ICON_INFORMATION, parent=parent)
+        except Exception as e:
+            parent = self.dlg if self.dlg else wx.FindWindowByName("PcbFrame")
+            wx.MessageBox(f"API Error: {e}", "Error", wx.OK | wx.ICON_ERROR, parent=parent)
+
+    def _confirm_and_generate_transistor(self, processed_data):
+        """generator_callback shared by every transistor family: gates
+        generate_library_files behind a human-approved pin/footprint mapping via
+        PinoutConfirmDialog - Digikey's data alone never establishes pin identity,
+        so nothing here is written to the library without that approval."""
+        pinout_confirm = processed_data.get("pinout_confirm")
+        if not pinout_confirm:
+            return generate_library_files(processed_data)
+
+        parent = self.dlg if self.dlg else wx.FindWindowByName("PcbFrame")
+        dlg = PinoutConfirmDialog(parent, pinout_confirm)
+        try:
+            if dlg.ShowModal() != wx.ID_OK:
+                return False, "Cancelled - no pinout was confirmed."
+            pin_mapping, chosen_footprint = dlg.get_result()
+        finally:
+            dlg.Destroy()
+
+        terminal_to_field = {
+            "E": "pin_e_number", "B": "pin_b_number", "C": "pin_c_number",
+            "G": "pin_g_number", "D": "pin_d_number", "S": "pin_s_number",
+        }
+        for pin_num, terminal in pin_mapping.items():
+            field = terminal_to_field.get(terminal)
+            if field:
+                processed_data["Symbol Data"][field] = pin_num
+
+        fp_lib = pinout_confirm.get("footprint_lib", "")
+        processed_data["Symbol Data"]["footprint"] = f"{fp_lib}:{chosen_footprint}" if fp_lib else chosen_footprint
+
+        return generate_library_files(processed_data)
 
     def _api_worker_batch(self, batch_text):
         token = self.get_token()

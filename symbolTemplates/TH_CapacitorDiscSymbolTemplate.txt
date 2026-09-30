@@ -13,7 +13,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -22,7 +22,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)

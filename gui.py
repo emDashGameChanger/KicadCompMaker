@@ -1,5 +1,11 @@
 import wx
+import wx.adv
 import json
+
+try:
+    from .TH_Transistor_Common import render_footprint_preview
+except ImportError:
+    from TH_Transistor_Common import render_footprint_preview
 
 RES_COMP_OPTS = ["Metal Film", "Carbon Film"]
 RES_PWR_OPTS = ["1/8 watt", "1/4 watt", "1/2 watt", "1 watt"]
@@ -9,6 +15,17 @@ CAP_ALUM_TYPE_OPTS = ["Axial", "Radial"]
 CAP_ALUM_VOL_OPTS = ["6.3v", "10v", "16v", "25v", "50v", "63v", "100v"]
 CAP_FILM_TYPE_OPTS = ["Disc", "Film"]
 CAP_FILM_VOL_OPTS = ["25v", "50v", "100v", "500v", "1kV", "2kV", "I don't care"]
+
+DIODE_TYPE_RADIO_OPTS = ["I don't care", "Standard Diode", "Zener", "Bridge Rectifier"]
+DIODE_TYPE_PICK_OPTS = ["Diode Array", "Zener Array", "RF Diode", "Variable Capacitance (Varicap)"]
+DIODE_TECH_OPTS = ["I don't care", "Schottky", "Standard", "SiC Schottky"]
+DIODE_PKG_OPTS = ["I don't care", "DO-41", "DO-35", "DO-15", "DO-201AD"]
+# Type indices (into the combined radio+picklist list) for which the Technology filter applies
+DIODE_TYPES_WITH_TECHNOLOGY = {0, 1, 3}
+
+TRANSISTOR_PKG_OPTS = ["I don't care", "TO-92", "TO-18", "TO-39", "TO-220", "TO-126", "TO-247"]
+BJT_POLARITY_OPTS = ["I don't care", "NPN", "PNP"]
+FET_POLARITY_OPTS = ["I don't care", "N-Channel", "P-Channel"]
 
 class ProgressCounterDialog(wx.Dialog):
     def __init__(self, parent, title, message):
@@ -93,6 +110,55 @@ class DigikeyDialog(wx.Dialog):
         parent.SetSizer(sizer)
         
         return {'val': val_ctrl, 'type': type_radios, 'vol': vol_radios, 'cust_vol': vol_cust_ctrl, 'vol_opts': vol_opts}
+
+    def create_transistor_controls(self, parent, key, state, polarity_opts):
+        """Part-number-first controls shared by the BJT/JFET/MOSFET sub-tabs -
+        transistors aren't specified by one scalar 'value' the way R/C are, so
+        this mirrors the Diode tab's part-number-first layout rather than
+        create_cap_controls's value-first one."""
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        row_pn = wx.BoxSizer(wx.HORIZONTAL)
+        lbl_pn = wx.StaticText(parent, label="Part Number:")
+        pn_ctrl = wx.TextCtrl(parent)
+        pn_ctrl.SetValue(state.get(f'{key}_pn', ''))
+        row_pn.Add(lbl_pn, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        row_pn.Add(pn_ctrl, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        sizer.Add(row_pn, 0, wx.EXPAND | wx.ALL, 5)
+
+        hint = wx.StaticText(parent, label="Other filters below are ignored when a part number is given.")
+        sizer.Add(hint, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 5)
+
+        row_pol = wx.BoxSizer(wx.HORIZONTAL)
+        lbl_pol = wx.StaticText(parent, label="Polarity:")
+        row_pol.Add(lbl_pol, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        pol_radios = []
+        saved_pol_idx = state.get(f'{key}_polarity_idx', 0)
+        for i, opt in enumerate(polarity_opts):
+            style = wx.RB_GROUP if i == 0 else 0
+            rb = wx.RadioButton(parent, label=opt, style=style)
+            if i == saved_pol_idx:
+                rb.SetValue(True)
+            pol_radios.append(rb)
+            row_pol.Add(rb, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        sizer.Add(row_pol, 0, wx.EXPAND | wx.ALL, 5)
+
+        row_pkg = wx.BoxSizer(wx.HORIZONTAL)
+        lbl_pkg = wx.StaticText(parent, label="Package:")
+        row_pkg.Add(lbl_pkg, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        pkg_radios = []
+        saved_pkg_idx = state.get(f'{key}_pkg_idx', 0)
+        for i, opt in enumerate(TRANSISTOR_PKG_OPTS):
+            style = wx.RB_GROUP if i == 0 else 0
+            rb = wx.RadioButton(parent, label=opt, style=style)
+            if i == saved_pkg_idx:
+                rb.SetValue(True)
+            pkg_radios.append(rb)
+            row_pkg.Add(rb, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        sizer.Add(row_pkg, 0, wx.EXPAND | wx.ALL, 5)
+
+        parent.SetSizer(sizer)
+        return {'pn': pn_ctrl, 'polarity': pol_radios, 'pkg': pkg_radios}
 
     def __init__(self, parent, state):
         wx.Dialog.__init__(self, parent, title="Digikey Importer", size=(650, 400), style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
@@ -202,11 +268,133 @@ class DigikeyDialog(wx.Dialog):
         self.tht_notebook.AddPage(self.tht_capacitors, "Capacitors")
 
         self.tht_diodes = wx.Panel(self.tht_notebook)
+        diode_sizer = wx.BoxSizer(wx.VERTICAL)
+
+        # Part Number
+        row_pn = wx.BoxSizer(wx.HORIZONTAL)
+        lbl_pn = wx.StaticText(self.tht_diodes, label="Part Number:")
+        self.tht_diode_pn = wx.TextCtrl(self.tht_diodes)
+        self.tht_diode_pn.SetValue(state.get('diode_pn', ''))
+        row_pn.Add(lbl_pn, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        row_pn.Add(self.tht_diode_pn, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        diode_sizer.Add(row_pn, 0, wx.EXPAND | wx.ALL, 5)
+
+        hint = wx.StaticText(self.tht_diodes, label="Other filters below are ignored when a part number is given.")
+        diode_sizer.Add(hint, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 5)
+
+        saved_diode_type_idx = state.get('diode_type_idx', 0)
+
+        # Type: radio row (first 4) + picklist (remaining)
+        row_type = wx.BoxSizer(wx.HORIZONTAL)
+        lbl_type = wx.StaticText(self.tht_diodes, label="Type:")
+        row_type.Add(lbl_type, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        self.tht_diode_type_radios = []
+        for i, opt in enumerate(DIODE_TYPE_RADIO_OPTS):
+            style = wx.RB_GROUP if i == 0 else 0
+            rb = wx.RadioButton(self.tht_diodes, label=opt, style=style)
+            if i == saved_diode_type_idx:
+                rb.SetValue(True)
+            self.tht_diode_type_radios.append(rb)
+            row_type.Add(rb, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+
+        self.tht_diode_type_pick = wx.Choice(self.tht_diodes, choices=DIODE_TYPE_PICK_OPTS)
+        pick_idx = saved_diode_type_idx - len(DIODE_TYPE_RADIO_OPTS)
+        if 0 <= pick_idx < len(DIODE_TYPE_PICK_OPTS):
+            self.tht_diode_type_pick.SetSelection(pick_idx)
+        row_type.Add(self.tht_diode_type_pick, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        diode_sizer.Add(row_type, 0, wx.EXPAND | wx.ALL, 5)
+
+        # Technology
+        row_tech = wx.BoxSizer(wx.HORIZONTAL)
+        lbl_tech = wx.StaticText(self.tht_diodes, label="Technology:")
+        row_tech.Add(lbl_tech, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        self.tht_diode_tech_radios = []
+        saved_tech_idx = state.get('diode_tech_idx', 0)
+        for i, opt in enumerate(DIODE_TECH_OPTS):
+            style = wx.RB_GROUP if i == 0 else 0
+            rb = wx.RadioButton(self.tht_diodes, label=opt, style=style)
+            if i == saved_tech_idx:
+                rb.SetValue(True)
+            self.tht_diode_tech_radios.append(rb)
+            row_tech.Add(rb, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        diode_sizer.Add(row_tech, 0, wx.EXPAND | wx.ALL, 5)
+
+        def update_tech_enabled():
+            pick_sel = self.tht_diode_type_pick.GetSelection()
+            if pick_sel != wx.NOT_FOUND:
+                type_idx = len(DIODE_TYPE_RADIO_OPTS) + pick_sel
+            else:
+                type_idx = 0
+                for i, rb in enumerate(self.tht_diode_type_radios):
+                    if rb.GetValue(): type_idx = i
+            enabled = type_idx in DIODE_TYPES_WITH_TECHNOLOGY
+            for rb in self.tht_diode_tech_radios:
+                rb.Enable(enabled)
+
+        def on_type_radio(event):
+            self.tht_diode_type_pick.SetSelection(wx.NOT_FOUND)
+            update_tech_enabled()
+
+        def on_type_pick(event):
+            for rb in self.tht_diode_type_radios:
+                rb.SetValue(False)
+            update_tech_enabled()
+
+        for rb in self.tht_diode_type_radios:
+            rb.Bind(wx.EVT_RADIOBUTTON, on_type_radio)
+        self.tht_diode_type_pick.Bind(wx.EVT_CHOICE, on_type_pick)
+        update_tech_enabled()
+
+        # Package
+        row_pkg = wx.BoxSizer(wx.HORIZONTAL)
+        lbl_pkg = wx.StaticText(self.tht_diodes, label="Package:")
+        row_pkg.Add(lbl_pkg, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        self.tht_diode_pkg_radios = []
+        saved_pkg_idx = state.get('diode_pkg_idx', 0)
+        for i, opt in enumerate(DIODE_PKG_OPTS):
+            style = wx.RB_GROUP if i == 0 else 0
+            rb = wx.RadioButton(self.tht_diodes, label=opt, style=style)
+            if i == saved_pkg_idx:
+                rb.SetValue(True)
+            self.tht_diode_pkg_radios.append(rb)
+            row_pkg.Add(rb, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        diode_sizer.Add(row_pkg, 0, wx.EXPAND | wx.ALL, 5)
+
+        self.tht_diodes.SetSizer(diode_sizer)
         self.tht_notebook.AddPage(self.tht_diodes, "Diodes")
+
+        self.tht_transistors = wx.Panel(self.tht_notebook)
+        transistor_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.tht_transistor_notebook = wx.Notebook(self.tht_transistors)
+        self.transistor_tabs = {}
+
+        # 1. BJT
+        self.tht_transistor_bjt = wx.Panel(self.tht_transistor_notebook)
+        self.transistor_tabs['bjt'] = self.create_transistor_controls(
+            self.tht_transistor_bjt, 'transistor_bjt', state, BJT_POLARITY_OPTS)
+        self.tht_transistor_notebook.AddPage(self.tht_transistor_bjt, "BJT")
+
+        # 2. JFET
+        self.tht_transistor_jfet = wx.Panel(self.tht_transistor_notebook)
+        self.transistor_tabs['jfet'] = self.create_transistor_controls(
+            self.tht_transistor_jfet, 'transistor_jfet', state, FET_POLARITY_OPTS)
+        self.tht_transistor_notebook.AddPage(self.tht_transistor_jfet, "JFET")
+
+        # 3. MOSFET
+        self.tht_transistor_mosfet = wx.Panel(self.tht_transistor_notebook)
+        self.transistor_tabs['mosfet'] = self.create_transistor_controls(
+            self.tht_transistor_mosfet, 'transistor_mosfet', state, FET_POLARITY_OPTS)
+        self.tht_transistor_notebook.AddPage(self.tht_transistor_mosfet, "MOSFET")
+
+        transistor_sizer.Add(self.tht_transistor_notebook, 1, wx.EXPAND | wx.ALL, 5)
+        self.tht_transistors.SetSizer(transistor_sizer)
+
+        self.tht_notebook.AddPage(self.tht_transistors, "Transistors")
 
         # Restore THT tab selection
         self.tht_notebook.SetSelection(state.get('tht_tab', 0))
         self.tht_cap_notebook.SetSelection(state.get('cap_tab', 0))
+        self.tht_transistor_notebook.SetSelection(state.get('transistor_tab', 0))
 
         tht_sizer.Add(self.tht_notebook, 1, wx.EXPAND | wx.ALL, 5)
         self.tab_tht.SetSizer(tht_sizer)
@@ -443,3 +631,170 @@ class BatchResultDialog(wx.Dialog):
         from collections import Counter
         counts = Counter(row['status'] for row in rows)
         return " | ".join(f"{status}: {count}" for status, count in counts.items())
+
+class PinoutConfirmDialog(wx.Dialog):
+    """Human-in-the-loop gate between a transistor search result and library
+    generation: package/footprint and pin-to-terminal identity are never
+    trusted from Digikey data or an LLM guess alone - a human must see the
+    evidence (or be told none exists yet) and explicitly assign every pin."""
+    def __init__(self, parent, pinout_confirm, evidence_images=None, rationale=""):
+        wx.Dialog.__init__(self, parent, title="Confirm Pin Assignment", size=(560, 760),
+                            style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
+        self.pinout_confirm = pinout_confirm
+        self.pin_mapping = None
+        self.chosen_footprint = None
+        self.fp_choice = None
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+
+        header = wx.StaticText(self, label=(
+            f"{pinout_confirm.get('mpn', '?')}  (package: {pinout_confirm.get('package_raw', '?')})\n"
+            "Verify against the datasheet before approving - nothing here is auto-trusted."))
+        sizer.Add(header, 0, wx.EXPAND | wx.ALL, 8)
+
+        datasheet = pinout_confirm.get('datasheet', '')
+        if datasheet:
+            link = wx.adv.HyperlinkCtrl(self, wx.ID_ANY, label=datasheet, url=datasheet,
+                                         style=wx.adv.HL_ALIGN_LEFT)
+            link.SetNormalColour(wx.Colour(0, 102, 204))
+            link.SetVisitedColour(wx.Colour(102, 0, 204))
+            sizer.Add(link, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 8)
+
+            # Read-only, pre-selected so the user can copy/paste even if the
+            # click-to-open handler above is blocked (e.g. no default browser set).
+            copy_field = wx.TextCtrl(self, value=datasheet, style=wx.TE_READONLY)
+            copy_field.SetSelection(0, len(datasheet))
+            sizer.Add(copy_field, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.BOTTOM, 8)
+        else:
+            sizer.Add(wx.StaticText(self, label="(no datasheet URL returned)"), 0, wx.EXPAND | wx.ALL, 8)
+
+        if evidence_images:
+            scroll = wx.ScrolledWindow(self, style=wx.VSCROLL)
+            scroll.SetScrollRate(0, 10)
+            img_sizer = wx.BoxSizer(wx.VERTICAL)
+            for path in evidence_images:
+                try:
+                    bmp = wx.Image(path, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+                    img_sizer.Add(wx.StaticBitmap(scroll, bitmap=bmp), 0, wx.ALL, 5)
+                except Exception:
+                    pass
+            scroll.SetSizer(img_sizer)
+            scroll.SetMinSize((-1, 220))
+            sizer.Add(scroll, 1, wx.EXPAND | wx.ALL, 5)
+        else:
+            warn = wx.StaticText(self, label=(
+                "No visual evidence available yet - open the datasheet yourself and "
+                "assign pins manually."))
+            warn.Wrap(480)
+            sizer.Add(warn, 0, wx.EXPAND | wx.ALL, 8)
+
+        rationale_box = wx.TextCtrl(
+            self, value=rationale or "(no automated rationale - manual assignment required)",
+            style=wx.TE_MULTILINE | wx.TE_READONLY, size=(-1, 60))
+        sizer.Add(rationale_box, 0, wx.EXPAND | wx.ALL, 5)
+
+        candidates = pinout_confirm.get('footprint_candidates', [])
+        resolved = pinout_confirm.get('footprint_resolved')
+        fp_row = wx.BoxSizer(wx.HORIZONTAL)
+        fp_row.Add(wx.StaticText(self, label="Footprint:"), 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        if resolved:
+            fp_row.Add(wx.StaticText(self, label=resolved), 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        elif candidates:
+            self.fp_choice = wx.Choice(self, choices=candidates)
+            self.fp_choice.SetSelection(0)
+            fp_row.Add(self.fp_choice, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        else:
+            fp_row.Add(wx.StaticText(self, label="No stock footprint match found - cannot generate."),
+                       0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        sizer.Add(fp_row, 0, wx.EXPAND | wx.ALL, 5)
+
+        # KiCad's own pad numbering for the footprint above - the datasheet's pinout
+        # diagram is pictorial (D/S/G drawn at physical locations, not "pin 1 = D"),
+        # so the human needs to see what KiCad calls pin 1/2/3 to map one to the other.
+        fp_preview_label = wx.StaticText(self, label=(
+            "KiCad pad numbering for this footprint (component/silkscreen side, i.e. "
+            "looking down at the top of the board) - if your datasheet's diagram is a "
+            "bottom/lead view instead, it will be mirrored left-right from this:"))
+        fp_preview_label.Wrap(480)
+        sizer.Add(fp_preview_label, 0, wx.EXPAND | wx.LEFT | wx.RIGHT | wx.TOP, 5)
+
+        self.fp_preview_bitmap = wx.StaticBitmap(self, size=(260, 200))
+        sizer.Add(self.fp_preview_bitmap, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
+
+        self._refresh_fp_preview(resolved or (candidates[0] if candidates else None))
+        if self.fp_choice is not None:
+            self.fp_choice.Bind(wx.EVT_CHOICE, self._on_fp_choice_changed)
+
+        terminals = pinout_confirm.get('terminals', [])
+        default_numbers = pinout_confirm.get('default_numbers', {})
+        num_to_term = {v: k for k, v in default_numbers.items()}
+        term_opts = list(terminals) + ["Unknown/Manual"]
+
+        self.pin_choices = {}
+        grid = wx.FlexGridSizer(len(terminals), 2, 5, 5)
+        grid.AddGrowableCol(1)
+        for i in range(1, len(terminals) + 1):
+            pin_num = str(i)
+            grid.Add(wx.StaticText(self, label=f"Pin {pin_num}:"), 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+            choice = wx.Choice(self, choices=term_opts)
+            guess = num_to_term.get(pin_num, "Unknown/Manual")
+            choice.SetSelection(term_opts.index(guess) if guess in term_opts else len(term_opts) - 1)
+            grid.Add(choice, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+            self.pin_choices[pin_num] = choice
+        sizer.Add(grid, 0, wx.EXPAND | wx.ALL, 5)
+
+        btns = self.CreateButtonSizer(wx.OK | wx.CANCEL)
+        sizer.Add(btns, 0, wx.EXPAND | wx.ALL, 5)
+
+        self.SetSizerAndFit(sizer)
+        self.CenterOnParent()
+
+        self.Bind(wx.EVT_BUTTON, self.on_ok, id=wx.ID_OK)
+
+    def _refresh_fp_preview(self, footprint_name):
+        bmp = render_footprint_preview(footprint_name) if footprint_name else None
+        if bmp is None:
+            bmp = wx.Bitmap(260, 200)
+            dc = wx.MemoryDC(bmp)
+            dc.SetBackground(wx.Brush(wx.Colour(255, 255, 255)))
+            dc.Clear()
+            dc.DrawText("No preview available for this footprint.", 10, 90)
+            dc.SelectObject(wx.NullBitmap)
+        self.fp_preview_bitmap.SetBitmap(bmp)
+
+    def _on_fp_choice_changed(self, event):
+        self._refresh_fp_preview(self.fp_choice.GetStringSelection())
+
+    def on_ok(self, event):
+        terminals = self.pinout_confirm.get('terminals', [])
+        resolved = self.pinout_confirm.get('footprint_resolved')
+
+        mapping = {}
+        for pin_num, choice in self.pin_choices.items():
+            val = choice.GetStringSelection()
+            if val == "Unknown/Manual" or not val:
+                wx.MessageBox(f"Pin {pin_num} is not assigned. Every pin must be assigned before approving.",
+                              "Incomplete", wx.OK | wx.ICON_WARNING, parent=self)
+                return
+            mapping[pin_num] = val
+
+        if len(set(mapping.values())) != len(terminals):
+            wx.MessageBox("Two pins were assigned the same terminal - each terminal must be used exactly once.",
+                          "Duplicate assignment", wx.OK | wx.ICON_WARNING, parent=self)
+            return
+
+        if resolved:
+            footprint = resolved
+        elif self.fp_choice is not None:
+            footprint = self.fp_choice.GetStringSelection()
+        else:
+            wx.MessageBox("No stock footprint is available for this package - cannot generate.",
+                          "No footprint", wx.OK | wx.ICON_ERROR, parent=self)
+            return
+
+        self.pin_mapping = mapping
+        self.chosen_footprint = footprint
+        self.EndModal(wx.ID_OK)
+
+    def get_result(self):
+        return self.pin_mapping, self.chosen_footprint

@@ -18,7 +18,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -27,7 +27,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -202,7 +202,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -211,7 +211,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -386,7 +386,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -395,7 +395,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -570,7 +570,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -579,7 +579,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -754,7 +754,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -763,7 +763,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -938,7 +938,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -947,7 +947,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -979,7 +979,7 @@
             (hide yes)
         )
     )
-    (property "Digikey Part#" "399-RSBEC2100CK00KTR-ND"
+    (property "Digikey Part#" "399-RSBEC2100CK00KCT-ND"
         (at 0 0 0)
         (effects
             (font
@@ -997,7 +997,7 @@
             (hide yes)
         )
     )
-    (property "Price" "0.31"
+    (property "Price" "0.33"
         (at 0 0 0)
         (effects
             (font
@@ -1122,7 +1122,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -1131,7 +1131,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -1306,7 +1306,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -1315,7 +1315,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -1490,7 +1490,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -1499,7 +1499,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -1674,7 +1674,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -1683,7 +1683,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -1858,7 +1858,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -1867,7 +1867,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -2042,7 +2042,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -2051,7 +2051,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -2226,7 +2226,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -2235,7 +2235,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -2410,7 +2410,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -2419,7 +2419,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -2451,7 +2451,7 @@
             (hide yes)
         )
     )
-    (property "Digikey Part#" "BC1041TR-ND"
+    (property "Digikey Part#" "BC1041CT-ND"
         (at 0 0 0)
         (effects
             (font
@@ -2469,7 +2469,7 @@
             (hide yes)
         )
     )
-    (property "Price" "0.24"
+    (property "Price" "0.27"
         (at 0 0 0)
         (effects
             (font
@@ -2594,7 +2594,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -2603,7 +2603,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -2778,7 +2778,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -2787,7 +2787,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -2819,7 +2819,7 @@
             (hide yes)
         )
     )
-    (property "Digikey Part#" "BC1002TR-ND"
+    (property "Digikey Part#" "BC1002CT-ND"
         (at 0 0 0)
         (effects
             (font
@@ -2837,7 +2837,7 @@
             (hide yes)
         )
     )
-    (property "Price" "0.26"
+    (property "Price" "0.27"
         (at 0 0 0)
         (effects
             (font
@@ -2962,7 +2962,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -2971,7 +2971,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -3146,7 +3146,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -3155,7 +3155,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -3330,7 +3330,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -3339,7 +3339,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -3514,7 +3514,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -3523,7 +3523,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -3555,7 +3555,7 @@
             (hide yes)
         )
     )
-    (property "Digikey Part#" "BC1035TR-ND"
+    (property "Digikey Part#" "BC1035CT-ND"
         (at 0 0 0)
         (effects
             (font
@@ -3573,7 +3573,7 @@
             (hide yes)
         )
     )
-    (property "Price" "0.26"
+    (property "Price" "0.27"
         (at 0 0 0)
         (effects
             (font
@@ -3698,7 +3698,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -3707,7 +3707,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -3882,7 +3882,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -3891,7 +3891,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -4066,7 +4066,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -4075,7 +4075,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -4250,7 +4250,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -4259,7 +4259,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -4291,7 +4291,7 @@
             (hide yes)
         )
     )
-    (property "Digikey Part#" "BC1010TR-ND"
+    (property "Digikey Part#" "BC1010CT-ND"
         (at 0 0 0)
         (effects
             (font
@@ -4309,7 +4309,7 @@
             (hide yes)
         )
     )
-    (property "Price" "0.26"
+    (property "Price" "0.27"
         (at 0 0 0)
         (effects
             (font
@@ -4434,7 +4434,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -4443,7 +4443,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -4618,7 +4618,7 @@
 		(at 0.254 1.778 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -4627,7 +4627,7 @@
 		(at 0.254 -2.032 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.84 0.84)
 			)
 			(justify left)
 		)
@@ -4723,6 +4723,558 @@
 		)
 	)
 	(symbol "C_Film_0.047µF_400V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_10000pF_50V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 0.84 0.84)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "10000pF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 0.84 0.84)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_D3.60mm_W2.30mm_P2.50mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://www.vishay.com/docs/45171/kseries.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "50V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "K103K10X7RF53L2-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "K103K10X7RF53L2"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.22"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±10%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_10000pF_50V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_Film_3.3µF_250V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 0.84 0.84)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "3.3µF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 0.84 0.84)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_Film_L26.00mm_W10.30mm_P22.50mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://industrial.panasonic.com/cdbs/www-data/pdf/RDI0000/ABD0000C179.pdf"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "250V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "EF2335-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "ECQ-E2335KF"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "1.57"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±10%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_Film_3.3µF_250V_1_1"
+		(polyline
+			(pts
+				(xy -1.524 0.508) (xy 1.524 0.508)
+			)
+			(stroke
+				(width 0.3048)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(polyline
+			(pts
+				(xy -1.524 -0.508) (xy 1.524 -0.508)
+			)
+			(stroke
+				(width 0.3302)
+				(type default)
+			)
+			(fill
+				(type none)
+			)
+		)
+		(pin passive line
+			(at 0 2.54 270)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "1"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+		(pin passive line
+			(at 0 -2.54 90)
+			(length 2.032)
+			(name "~"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(number "2"
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
+
+(symbol "C_3.3µF_25V"
+	(pin_numbers
+		(hide yes)
+	)
+	(pin_names
+		(offset 0.254)
+		(hide yes)
+	)
+	(exclude_from_sim no)
+	(in_bom yes)
+	(on_board yes)
+	(property "Reference" "C"
+		(at 0.254 1.778 0)
+		(effects
+			(font
+				(size 0.84 0.84)
+			)
+			(justify left)
+		)
+	)
+	(property "Value" "3.3µF"
+		(at 0.254 -2.032 0)
+		(effects
+			(font
+				(size 0.84 0.84)
+			)
+			(justify left)
+		)
+	)
+	(property "Footprint" "C_TH_emDashGameChanger:C_D5.50mm_W3.15mm_P5.00mm"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Datasheet" "https://pim.murata.com/asset/pim4/ceramicCapacitorLead/RCE_X7R_X7S_25V-100V_E_PDF_CERAMICCAPACITORLEAD?lastModifiedDatetime=20250909130221"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "Voltage" "25V"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Digikey Part#" "RCER71E335K2K1H03B-ND"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Manufacturer Part#" "RCER71E335K2K1H03B"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Price" "0.8"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Tolerance" "±10%"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+    (property "Description" "Unpolarized capacitor, small symbol"
+        (at 0 0 0)
+        (effects
+            (font
+                (size 1.27 1.27)
+            )
+            (hide yes)
+        )
+    )
+	(property "ki_keywords" "capacitor cap"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(property "ki_fp_filters" "C_*"
+		(at 0 0 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(hide yes)
+		)
+	)
+	(symbol "C_3.3µF_25V_1_1"
 		(polyline
 			(pts
 				(xy -1.524 0.508) (xy 1.524 0.508)

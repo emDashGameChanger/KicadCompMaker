@@ -3,18 +3,24 @@ import re
 import math
 
 try:
-    from .DigikeyVoltageMap import parse_voltage_volts, lookup_value_id
+    from .DigikeyVoltageMap import parse_voltage_volts
 except ImportError:
-    from DigikeyVoltageMap import parse_voltage_volts, lookup_value_id
+    from DigikeyVoltageMap import parse_voltage_volts
 
+try:
+    from .DigikeyPartNumber import pick_digikey_pn
+except ImportError:
+    from DigikeyPartNumber import pick_digikey_pn
 
 def _product_voltage_volts(product_json):
-    """Extracts a product's own voltage rating (ParameterId 14) and parses it
-    to a float number of volts, falling back to a regex search over the
-    product's description for products that don't expose it as a structured
-    parameter. Returns None if no voltage could be determined."""
+    """Extracts a product's own voltage rating (ParameterId 2079 - "Voltage -
+    Rated" for Aluminum Electrolytic capacitors, confirmed against a live
+    product dump; this category does NOT expose ParameterId 14 at all) and
+    parses it to a float number of volts, falling back to a regex search over
+    the product's description for products that don't expose it as a
+    structured parameter. Returns None if no voltage could be determined."""
     for p in product_json.get("Parameters", []):
-        if p.get("ParameterId") == 14:
+        if p.get("ParameterId") == 2079:
             volts = parse_voltage_volts(p.get("ValueText", ""))
             if volts is not None:
                 return volts
@@ -94,19 +100,7 @@ def process_capacitor(product_json, lib_config=None):
     price = product_json.get("UnitPrice", 999.99)
     
     # DigiKey PN Logic
-    variations = product_json.get("ProductVariations", [])
-    dk_pn = "N/A"
-    for v in variations:
-        if v.get("PackageType", {}).get("Id") == 2:
-            dk_pn = v.get("DigiKeyProductNumber")
-            break
-    if dk_pn == "N/A":
-        for v in variations:
-            if v.get("PackageType", {}).get("Id") == 1:
-                dk_pn = v.get("DigiKeyProductNumber")
-                break
-    if dk_pn == "N/A" and variations:
-        dk_pn = variations[0].get("DigiKeyProductNumber")
+    dk_pn = pick_digikey_pn(product_json)
 
     # Parameters
     params = product_json.get("Parameters", [])
@@ -121,12 +115,12 @@ def process_capacitor(product_json, lib_config=None):
         pid = p.get("ParameterId")
         if pid == 2049: capacitance = p.get("ValueText", "Unknown")
         elif pid == 3: tolerance = p.get("ValueText", "Unknown")
-        elif pid == 14: voltage = p.get("ValueText", "Unknown")
+        elif pid == 2079: voltage = p.get("ValueText", "Unknown")
         elif pid == 508: lead_spacing = p.get("ValueText", "Unknown")
         elif pid == 46: diameter_raw = p.get("ValueText", "Unknown")
         elif pid == 1500: height_raw = p.get("ValueText", "Unknown")
 
-    # Fallback for Voltage if Unknown (some products don't expose ParameterId 14
+    # Fallback for Voltage if Unknown (some products don't expose ParameterId 2079
     # as a structured parameter)
     if voltage == "Unknown":
         desc = product_json.get("Description", {}).get("DetailedDescription", "")
@@ -210,20 +204,20 @@ def search_tht_capacitor(capacitance, voltage, type_idx, cat_id, access_token, c
     else:
         cap_str = cap_clean
 
-    # Format Voltage - ParameterId 14 ("Voltage - Rated") needs Digi-Key's own
-    # internal ValueId, not display text (e.g. "50 V" matches nothing - the
-    # old code's bug). If we don't have a confirmed ValueId for this voltage,
-    # skip the server-side filter and filter the results client-side instead
-    # of silently returning zero matches.
+    # Format Voltage - Aluminum Electrolytic capacitors expose their voltage
+    # rating as ParameterId 2079 ("Voltage - Rated"), confirmed against a live
+    # product dump (this category doesn't carry ParameterId 14 at all - that's
+    # a different parameter used by other capacitor categories). Unlike the
+    # opaque-ValueId parameters, 2079 is a plain-text UnitOfMeasure field where
+    # Digi-Key's own display string (e.g. "63 V") works directly as the filter
+    # value, the same way capacitance/resistance text filters do - so this can
+    # always be filtered server-side, no ValueId lookup table needed.
     target_volts = None
-    voltage_value_id = None
-    needs_client_filter = False
+    voltage_str = None
     if voltage.lower() != "i don't care":
         target_volts = parse_voltage_volts(voltage)
         if target_volts is not None:
-            voltage_value_id = lookup_value_id(target_volts)
-            if voltage_value_id is None:
-                needs_client_filter = True
+            voltage_str = f"{target_volts:g} V"
 
     # Type Mapping (0=Axial, 1=Radial)
     type_id = "317190" if type_idx == 0 else "392320"
@@ -232,13 +226,13 @@ def search_tht_capacitor(capacitance, voltage, type_idx, cat_id, access_token, c
         {"ParameterID": 2049, "FilterValues": [{"Id": cap_str}]},
         {"ParameterId": 16, "FilterValues": [{"Id": type_id}]}
     ]
-    if voltage_value_id:
-        filters.append({"ParameterId": 14, "FilterValues": [{"Id": voltage_value_id}]})
+    if voltage_str:
+        filters.append({"ParameterId": 2079, "FilterValues": [{"Id": voltage_str}]})
 
     url = "https://api.digikey.com/products/v4/search/keyword"
     payload = {
         "Keywords": "capacitor",
-        "Limit": 100 if needs_client_filter else 50,
+        "Limit": 50,
         "Offset": 0,
         "MinimumQuantityAvailable": 1,
         "FilterOptionsRequest": {
@@ -268,11 +262,5 @@ def search_tht_capacitor(capacitance, voltage, type_idx, cat_id, access_token, c
             response = requests.post(url, json=payload, headers=headers)
 
     results = response.json()
-
-    if needs_client_filter and target_volts is not None:
-        products = results.get("Products", [])
-        filtered = [p for p in products if _product_voltage_volts(p) == target_volts]
-        results["Products"] = filtered
-        results["ProductsCount"] = len(filtered)
 
     return results

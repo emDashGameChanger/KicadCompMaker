@@ -127,3 +127,22 @@ Add each one to KiCad once:
 2. **Footprint libraries:** KiCad → Preferences → Manage Footprint Libraries... → **+** to add the same way (e.g. nickname `R_TH_emDashGameChanger`, path `~/.local/share/kicad/9.0/footprints/R_TH_emDashGameChanger.pretty`).
 
 Once added, newly generated parts in that category just show up — no need to re-add the library each time.
+
+### Pricing a schematic's BOM (`BomPricing.py`)
+
+A command-line tool that prices every part in a schematic that has a Digi-Key number — in either the `Digikey Part#` field (our generated parts) or `Digi-Key_PN` (Digi-Key's own KiCad library) — using live Digi-Key price breaks. It uses the same credentials as the plugin (`config.json` or the `DIGIKEY_CLIENT_ID`/`DIGIKEY_CLIENT_SECRET` environment variables).
+
+```
+python3 BomPricing.py ~/Projects/x100/x100.kicad_sch            # 1 board
+python3 BomPricing.py ~/Projects/x100/x100.kicad_sch -n 3 --csv x100_pricing.csv
+```
+
+For each part it lists every price break, the cost at the quantity you need, and the total and extra cost of the next few breaks. A higher break is marked:
+
+- **CHEAPER** — buying more costs less in total (Digi-Key's own "buy more and save" case)
+- **SAME** — same total
+- **CLOSE** — at most `--close-pct` (default 10%) or `--close-abs` (default $0.25) more
+
+The summary lists the best buy-up per part, part numbers to order instead of the schematic's (e.g. the Cut Tape twin of a Tape & Reel number with a 4000-piece minimum, or a renumbered part), and problems left out of the totals (not found, reel-only, out of stock). Sub-sheets are followed, multi-unit parts count once, and symbols excluded from the BOM or marked DNP are skipped.
+
+Other options: `--max-break` (ignore breaks above this quantity, default 1000), `--show-breaks` (higher breaks listed per part, default 3), `-j` (parallel requests, default 5). Each run makes one API request per unique part; Digi-Key's rate limit is retried automatically.

@@ -1,6 +1,10 @@
 import requests
 import re
 import math
+try:
+    from .DigikeyPartNumber import pick_digikey_pn
+except ImportError:
+    from DigikeyPartNumber import pick_digikey_pn
 
 TH_RESISTOR_PAD_SIZE = 1.4
 
@@ -11,20 +15,7 @@ def process_resistor(product_json):
     price = product_json.get("UnitPrice", 999.99)
     
     # DigiKey PN Logic
-    variations = product_json.get("ProductVariations", [])
-    dk_pn = "N/A"
-    # Priority: Cut Tape (2), Tape & Reel (1), then first available
-    for v in variations:
-        if v.get("PackageType", {}).get("Id") == 2:
-            dk_pn = v.get("DigiKeyProductNumber")
-            break
-    if dk_pn == "N/A":
-        for v in variations:
-            if v.get("PackageType", {}).get("Id") == 1:
-                dk_pn = v.get("DigiKeyProductNumber")
-                break
-    if dk_pn == "N/A" and variations:
-        dk_pn = variations[0].get("DigiKeyProductNumber")
+    dk_pn = pick_digikey_pn(product_json)
 
     # Parameters
     params = product_json.get("Parameters", [])

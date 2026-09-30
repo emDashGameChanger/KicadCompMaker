@@ -185,7 +185,8 @@
     )
     (pad "2" thru_hole oval
         (at {{ pinPitch | round(2) }} 0)
-		(drill 0.7)
+        (size {{ padSize | round(2) }} {{ padSize | round(2) }})
+        (drill 0.7)
         (layers "*.Cu" "*.Mask")
         (remove_unused_layers no)
         (uuid "")

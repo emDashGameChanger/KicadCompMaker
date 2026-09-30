@@ -6,6 +6,11 @@ try:
 except ImportError:
     from DigikeyVoltageMap import parse_voltage_volts, lookup_value_id
 
+try:
+    from .DigikeyPartNumber import pick_digikey_pn
+except ImportError:
+    from DigikeyPartNumber import pick_digikey_pn
+
 TH_DISC_CAP_PAD_SIZE = 1.6
 
 
@@ -75,7 +80,9 @@ def search_tht_disc_capacitor(capacitance, voltage, cat_id, access_token, client
     url = "https://api.digikey.com/products/v4/search/keyword"
     payload = {
         "Keywords": "capacitor",
-        "Limit": 100 if needs_client_filter else 50,
+        # Digi-Key's API hard-caps Limit at 50 (a value > 50 returns HTTP 400,
+        # which was previously getting silently swallowed as "0 results").
+        "Limit": 50,
         "Offset": 0,
         "MinimumQuantityAvailable": 1,
         "FilterOptionsRequest": {
@@ -128,14 +135,7 @@ def process_disc_capacitor(product_json, lib_config=None):
     price = product_json.get("UnitPrice", 0.0)
     
     # DK Part Number
-    variations = product_json.get("ProductVariations", [])
-    dk_pn = "N/A"
-    for v in variations:
-        if v.get("PackageType", {}).get("Id") in [1, 2]: # Tape&Reel or CutTape
-            dk_pn = v.get("DigiKeyProductNumber")
-            break
-    if dk_pn == "N/A" and variations:
-        dk_pn = variations[0].get("DigiKeyProductNumber")
+    dk_pn = pick_digikey_pn(product_json)
 
     # 2. Parameters
     params = product_json.get("Parameters", [])
@@ -151,8 +151,9 @@ def process_disc_capacitor(product_json, lib_config=None):
         if pid == 2049: capacitance = val
         elif pid == 3: tolerance = val
         elif pid == 14: voltage = val
+        elif pid == 1293 and voltage == "Unknown": voltage = val # Film: "Voltage Rating - DC"
         elif pid == 508: lead_spacing_raw = val
-        elif pid == 46: diameter_raw = val
+        elif pid in (46, 2097): diameter_raw = val # 2097 = Film "Size / Dimension"
 
     # Fallback for Voltage if Unknown
     if voltage == "Unknown":
