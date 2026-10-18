@@ -8,9 +8,9 @@ except ImportError:
     from DigikeyVoltageMap import parse_voltage_volts
 
 try:
-    from .DigikeyPartNumber import pick_digikey_pn
+    from .DigikeyPartNumber import pick_digikey_pn, check_api_response
 except ImportError:
-    from DigikeyPartNumber import pick_digikey_pn
+    from DigikeyPartNumber import pick_digikey_pn, check_api_response
 
 def _product_voltage_volts(product_json):
     """Extracts a product's own voltage rating (ParameterId 2079 - "Voltage -
@@ -260,6 +260,7 @@ def search_tht_capacitor(capacitance, voltage, type_idx, cat_id, access_token, c
         if new_token:
             headers["authorization"] = f"Bearer {new_token}"
             response = requests.post(url, json=payload, headers=headers)
+    check_api_response(response)
 
     results = response.json()
 

@@ -13,3 +13,15 @@ def pick_digikey_pn(product_json):
     if orderable:
         return orderable[0].get("DigiKeyProductNumber")
     return "N/A"
+
+
+def check_api_response(response):
+    """Raises on a Digi-Key quota/server failure (429, or a 5xx such as the
+    500 "SC-Quota ... ResponseCode 429" fault) so callers report it as an API
+    error instead of silently treating the empty body as "no results"."""
+    if response.status_code == 429 or response.status_code >= 500:
+        try:
+            detail = response.json().get("fault", {}).get("faultstring") or response.text
+        except ValueError:
+            detail = response.text
+        raise RuntimeError(f"Digi-Key API error {response.status_code}: {detail[:200]}")

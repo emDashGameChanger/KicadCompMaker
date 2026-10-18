@@ -2,9 +2,9 @@ import requests
 import re
 import math
 try:
-    from .DigikeyPartNumber import pick_digikey_pn
+    from .DigikeyPartNumber import pick_digikey_pn, check_api_response
 except ImportError:
-    from DigikeyPartNumber import pick_digikey_pn
+    from DigikeyPartNumber import pick_digikey_pn, check_api_response
 
 TH_RESISTOR_PAD_SIZE = 1.4
 
@@ -96,15 +96,18 @@ def process_resistor(product_json):
     
     return processed_data
 
-def search_tht_resistor(resistance, power_idx, tolerance_idx, comp_idx, access_token, client_id, token_refresher=None):
-    # Format Resistance Value
+def format_resistance(resistance):
+    """User text ("10k", "4.7M", "220") -> Digi-Key's resistance filter text
+    ("10 kOhms", "4.7 MOhms", "220 Ohms"). Shared by THT and SMD searches."""
     res_val = resistance.strip()
     if res_val.lower().endswith('k'):
-        res_str = f"{res_val[:-1]} kOhms"
+        return f"{res_val[:-1]} kOhms"
     elif res_val.lower().endswith('m'):
-        res_str = f"{res_val[:-1]} MOhms"
-    else:
-        res_str = f"{res_val} Ohms"
+        return f"{res_val[:-1]} MOhms"
+    return f"{res_val} Ohms"
+
+def search_tht_resistor(resistance, power_idx, tolerance_idx, comp_idx, access_token, client_id, token_refresher=None):
+    res_str = format_resistance(resistance)
 
     # Power Mapping
     power_map = {
@@ -167,5 +170,6 @@ def search_tht_resistor(resistance, power_idx, tolerance_idx, comp_idx, access_t
         if new_token:
             headers["authorization"] = f"Bearer {new_token}"
             response = requests.post(url, json=payload, headers=headers)
+    check_api_response(response)
 
     return response.json()

@@ -3,9 +3,9 @@ import re
 import requests
 import wx
 try:
-    from .DigikeyPartNumber import pick_digikey_pn
+    from .DigikeyPartNumber import pick_digikey_pn, check_api_response
 except ImportError:
-    from DigikeyPartNumber import pick_digikey_pn
+    from DigikeyPartNumber import pick_digikey_pn, check_api_response
 
 # Stock KiCad THT transistor footprint library. Package/Case text (ParameterId 16)
 # -> list of candidate stock footprint names in that library. A package family maps
@@ -35,6 +35,57 @@ TRANSISTOR_PACKAGE_ALIASES = {
 STOCK_FP_LIB = "Package_TO_SOT_THT"  # KiCad's own stock footprint library nickname
 STOCK_FP_DIR = "/usr/share/kicad/footprints/Package_TO_SOT_THT.pretty"
 
+# Surface-mount counterparts of the tables above (stock Package_TO_SOT_SMD).
+# Every entry here has exactly 3 numbered pads (DPAK/D2PAK/SOT-223 tabs share
+# pad 2), so the 3-terminal symbols map onto them 1:1.
+SMD_TRANSISTOR_STOCK_FOOTPRINTS = {
+    "SOT-23":  ["SOT-23"],
+    "SOT-323": ["SOT-323_SC-70"],
+    "SOT-416": ["SOT-416"],
+    "SOT-523": ["SOT-523"],
+    "SOT-723": ["SOT-723"],
+    "SOT-89":  ["SOT-89-3"],
+    "SOT-223": ["SOT-223-3_TabPin2"],
+    "TO-252":  ["TO-252-2", "TO-252-3_TabPin2"],
+    "TO-263":  ["TO-263-2", "TO-263-3_TabPin2"],
+}
+
+# Digikey lists most SMD transistor packages under their JEDEC/EIAJ names first
+# (e.g. "TO-236-3, SC-59, SOT-23-3", "TO-261-4, TO-261AA" for SOT-223).
+SMD_TRANSISTOR_PACKAGE_ALIASES = {
+    "TO-236": "SOT-23",
+    "TO-236AB": "SOT-23",
+    "SC-70":  "SOT-323",
+    "SC-75":  "SOT-416",
+    "TO-243": "SOT-89",
+    "TO-243AA": "SOT-89",
+    "TO-261": "SOT-223",
+    "TO-261AA": "SOT-223",
+}
+
+# Families whose Digikey pin-count suffix legitimately exceeds 3 because the
+# tab is counted as a lead (SOT-223 is "TO-261-4"). Any other family token with
+# a pin-count suffix > 3 (e.g. "SOT-23-6", "SC-70-5") is a different, multi-pin
+# package and must not match a 3-pin footprint.
+SMD_MAX_PIN_SUFFIX = {"SOT-223": 4}
+
+SMD_STOCK_FP_LIB = "Package_TO_SOT_SMD"
+SMD_STOCK_FP_DIR = "/usr/share/kicad/footprints/Package_TO_SOT_SMD.pretty"
+
+# GUI SMD Package selector idx -> normalized package family key
+SMD_TRANSISTOR_PACKAGE_IDX = {
+    1: "SOT-23",
+    2: "SOT-323",
+    3: "SOT-523",
+    4: "SOT-89",
+    5: "SOT-223",
+    6: "TO-252",
+    7: "TO-263",
+}
+
+THT_MOUNT_ID = "411897"
+SMD_MOUNT_IDS = ("409393", "409430")  # Surface Mount, Surface Mount + Wettable Flank
+
 # GUI Package selector idx -> normalized package family key
 TRANSISTOR_PACKAGE_IDX = {
     1: "TO-92",
@@ -47,27 +98,58 @@ TRANSISTOR_PACKAGE_IDX = {
 
 URL = "https://api.digikey.com/products/v4/search/keyword"
 
+# Symbol Data field each terminal letter's pin number is written into.
+TERMINAL_FIELDS = {
+    "E": "pin_e_number", "B": "pin_b_number", "C": "pin_c_number",
+    "G": "pin_g_number", "D": "pin_d_number", "S": "pin_s_number",
+}
 
-def normalize_package_family(raw_text):
-    """Extracts a TO-\\d+/SOT-\\d+ family token from Digikey's free-text
-    Package/Case value, resolving known aliases (e.g. TO-226AA -> TO-92).
-    Returns None if nothing recognizable is found."""
-    for tok in re.findall(r'(?:TO|SOT)-\d+[A-Z]*', raw_text or ""):
-        tok = TRANSISTOR_PACKAGE_ALIASES.get(tok, tok)
-        base_match = re.match(r'((?:TO|SOT)-\d+)', tok)
+
+def mount_tables(smd=False):
+    """(stock footprint table, alias table, footprint lib, footprint dir)."""
+    if smd:
+        return (SMD_TRANSISTOR_STOCK_FOOTPRINTS, SMD_TRANSISTOR_PACKAGE_ALIASES,
+                SMD_STOCK_FP_LIB, SMD_STOCK_FP_DIR)
+    return (TRANSISTOR_STOCK_FOOTPRINTS, TRANSISTOR_PACKAGE_ALIASES,
+            STOCK_FP_LIB, STOCK_FP_DIR)
+
+
+def mount_filter(smd=False):
+    ids = SMD_MOUNT_IDS if smd else (THT_MOUNT_ID,)
+    return [{"ParameterId": 69, "FilterValues": [{"Id": i} for i in ids]}]
+
+
+def normalize_package_family(raw_text, smd=False):
+    """Extracts a TO-/SOT-/SC- family token from Digikey's free-text
+    Package/Case value, resolving known aliases (e.g. TO-226AA -> TO-92,
+    TO-236 -> SOT-23). Returns None if nothing recognizable is found."""
+    table, aliases, _, _ = mount_tables(smd)
+    for tok, pins in re.findall(r'((?:TO|SOT|SC)-\d+[A-Z]*)(?:-(\d+))?', raw_text or ""):
+        tok = aliases.get(tok, tok)
+        base_match = re.match(r'((?:TO|SOT|SC)-\d+)', tok)
         base = base_match.group(1) if base_match else tok
-        if base in TRANSISTOR_STOCK_FOOTPRINTS:
-            return base
+        base = aliases.get(base, base)
+        if base not in table:
+            continue
+        if smd and pins and int(pins) > SMD_MAX_PIN_SUFFIX.get(base, 3):
+            continue
+        return base
     return None
 
 
-def match_stock_footprint(raw_text):
+def match_stock_footprint(raw_text, smd=False):
     """Returns {"footprint": str|None, "candidates": [names]}. A single
     unambiguous candidate is auto-resolved (footprint == candidates[0]); zero or
     multiple candidates mean a human must disambiguate before generation."""
-    family = normalize_package_family(raw_text)
+    table, _, _, fp_dir = mount_tables(smd)
+    family = normalize_package_family(raw_text, smd)
     if family:
-        candidates = list(TRANSISTOR_STOCK_FOOTPRINTS.get(family, []))
+        candidates = list(table.get(family, []))
+    elif smd:
+        # No generic on-disk fallback for SMD: Package_TO_SOT_SMD is full of
+        # same-prefix multi-pin parts (SOT-23-5/6/8...) that would silently
+        # mismatch a 3-terminal symbol.
+        candidates = []
     else:
         # Generic fallback for families we haven't curated: list whatever stock
         # footprints share the same "TO-<n>-" prefix, straight off disk, so
@@ -78,7 +160,7 @@ def match_stock_footprint(raw_text):
             prefix = m.group(1) + "-"
             try:
                 candidates = sorted(
-                    f[:-len(".kicad_mod")] for f in os.listdir(STOCK_FP_DIR)
+                    f[:-len(".kicad_mod")] for f in os.listdir(fp_dir)
                     if f.startswith(prefix) and f.endswith(".kicad_mod")
                 )
             except OSError:
@@ -87,6 +169,55 @@ def match_stock_footprint(raw_text):
     if len(candidates) == 1:
         return {"footprint": candidates[0], "candidates": candidates}
     return {"footprint": None, "candidates": candidates}
+
+
+# SMD packages whose middle pad is a heatsink tab - power parts put the
+# collector/drain there, so their placeholder pin guesses differ from SOT-23.
+SMD_TAB_FAMILIES = {"SOT-89", "SOT-223", "TO-252", "TO-263"}
+
+
+def pick_default_numbers(pkg_raw, smd, tht_default, smd_default, smd_tab_default=None):
+    """Chooses the placeholder (unconfirmed) pin guess shown in the confirm
+    dialog for the product's mount/package."""
+    if not smd:
+        return tht_default
+    if smd_tab_default and normalize_package_family(pkg_raw, True) in SMD_TAB_FAMILIES:
+        return smd_tab_default
+    return smd_default
+
+
+def build_pinout_confirm(family, terminals, default_numbers, pkg_raw, mpn, datasheet, smd=False):
+    """pinout_confirm block shared by every transistor processor - consumed by
+    gui.PinoutConfirmDialog (interactive) or apply_pinout via a batch pins=
+    field. The default_numbers are documented guesses, never auto-applied."""
+    _, _, fp_lib, fp_dir = mount_tables(smd)
+    fp_match = match_stock_footprint(pkg_raw, smd)
+    return {
+        "family": family,
+        "terminals": terminals,
+        "default_numbers": default_numbers,
+        "package_raw": pkg_raw,
+        "footprint_lib": fp_lib,
+        "footprint_dir": fp_dir,
+        "footprint_candidates": fp_match["candidates"],
+        "footprint_resolved": fp_match["footprint"],
+        "mpn": mpn,
+        "datasheet": datasheet,
+    }
+
+
+def apply_pinout(processed_data, pin_mapping, footprint):
+    """Writes a human-approved {pin_number: terminal} mapping and footprint name
+    into processed_data's Symbol Data (in place) and returns it. Shared by the
+    interactive PinoutConfirmDialog path and the batch pins= path."""
+    sym = processed_data["Symbol Data"]
+    for pin_num, terminal in pin_mapping.items():
+        field = TERMINAL_FIELDS.get(terminal)
+        if field:
+            sym[field] = str(pin_num)
+    fp_lib = processed_data.get("pinout_confirm", {}).get("footprint_lib", "")
+    sym["footprint"] = f"{fp_lib}:{footprint}" if fp_lib else footprint
+    return processed_data
 
 
 def _sexp_parse(text):
@@ -257,8 +388,29 @@ def search_leaf(keywords, category_id, filters, limit, access_token, client_id, 
     if resp.status_code == 401 and token_refresher:
         new_token = token_refresher()
         if new_token:
-            resp = post_search(keywords, filter_req, limit, new_token, client_id)
+            access_token = new_token
+            resp = post_search(keywords, filter_req, limit, access_token, client_id)
+    check_api_response(resp)
+    if resp.status_code == 400 and filters:
+        # Some exact part numbers (e.g. MMBFJ112) make Digi-Key reject any
+        # parametric filter ("Parametric Filtering Not Support at Parent
+        # Category Level") - search unfiltered and apply the filters here.
+        resp = post_search(keywords, {"CategoryFilter": {"id": str(category_id)}, "ParameterFilters": []},
+                           limit, access_token, client_id)
+        check_api_response(resp)
+        if resp.status_code == 200:
+            return [p for p in resp.json().get("Products", []) if _matches_filters(p, filters)]
     return resp.json().get("Products", []) if resp.status_code == 200 else []
+
+
+def _matches_filters(product, filters):
+    """Client-side equivalent of Digi-Key ParameterFilters (any listed ValueId per parameter)."""
+    values = {p.get("ParameterId"): p.get("ValueId") for p in product.get("Parameters", [])}
+    for f in filters:
+        pid = f.get("ParameterId", f.get("ParameterID"))
+        if values.get(pid) not in {str(v["Id"]) for v in f.get("FilterValues", [])}:
+            return False
+    return True
 
 
 def dedupe_and_sort(products):
@@ -274,11 +426,11 @@ def dedupe_and_sort(products):
     return deduped
 
 
-def filter_by_package(products, target_family):
+def filter_by_package(products, target_family, smd=False):
     def _matches(p):
         for param in p.get("Parameters", []):
             if param.get("ParameterId") == 16:
-                return normalize_package_family(param.get("ValueText", "")) == target_family
+                return normalize_package_family(param.get("ValueText", ""), smd) == target_family
         return False
     return [p for p in products if _matches(p)]
 

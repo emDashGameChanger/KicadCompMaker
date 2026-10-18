@@ -7,9 +7,9 @@ except ImportError:
     from DigikeyVoltageMap import parse_voltage_volts, lookup_value_id
 
 try:
-    from .DigikeyPartNumber import pick_digikey_pn
+    from .DigikeyPartNumber import pick_digikey_pn, check_api_response
 except ImportError:
-    from DigikeyPartNumber import pick_digikey_pn
+    from DigikeyPartNumber import pick_digikey_pn, check_api_response
 
 TH_DISC_CAP_PAD_SIZE = 1.6
 
@@ -31,8 +31,10 @@ def _product_voltage_volts(product_json):
     return None
 
 
-def search_tht_disc_capacitor(capacitance, voltage, cat_id, access_token, client_id, token_refresher=None, type_idx=0):
-    # Format Capacitance
+def format_capacitance(capacitance):
+    """User text ("22u", "100nF", "10 pF") -> Digi-Key's capacitance filter
+    text, with a space between value and unit ("22 uF" etc). Shared by the
+    THT and SMD capacitor searches."""
     cap_clean = capacitance.strip()
     if not cap_clean.endswith("F"):
         cap_clean += "F"
@@ -41,9 +43,12 @@ def search_tht_disc_capacitor(capacitance, voltage, cat_id, access_token, client
     match = re.match(r'^([\d\.]+)\s*([µumkM]?)F$', cap_clean)
     if match:
         val, unit = match.groups()
-        cap_str = f"{val} {unit}F"
-    else:
-        cap_str = cap_clean
+        return f"{val} {unit}F"
+    return cap_clean
+
+
+def search_tht_disc_capacitor(capacitance, voltage, cat_id, access_token, client_id, token_refresher=None, type_idx=0):
+    cap_str = format_capacitance(capacitance)
 
     # Format Voltage - ParameterId 14 ("Voltage - Rated") needs Digi-Key's own
     # internal ValueId, not display text (e.g. "50 V" matches nothing - the
@@ -110,6 +115,7 @@ def search_tht_disc_capacitor(capacitance, voltage, cat_id, access_token, client
         if new_token:
             headers["authorization"] = f"Bearer {new_token}"
             response = requests.post(url, json=payload, headers=headers)
+    check_api_response(response)
 
     results = response.json()
 

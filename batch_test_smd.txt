@@ -1,0 +1,18 @@
+# Test batch: surface mount parts (plus a couple of THT semiconductors)
+smd_resistor value=10k size=0603 tolerance=1%
+smd_resistor value=4.7k size=0805 handsolder=no
+smd_cap value=100n size=0603 voltage=50v dielectric=X7R
+smd_cap value=22p size=0402 dielectric=C0G
+smd_tant value=10u voltage=16v case=B
+smd_alum value=47u voltage=25v
+smd_diode pn=SS14
+smd_diode pn=1N4148W
+smd_diode pn=BZT52C5V1
+smd_bjt pn=MMBT3904 pins=BEC
+smd_mosfet pn=BSS138 pins=GSD
+smd_jfet pn=MMBFJ201 pins=DSG
+smd_mosfet pn=IRLR024N pins=GDS footprint=TO-252-2
+# no pins= : the pin assignment dialog opens for this one after the batch
+smd_bjt pn=BC847
+diode pn=1N4148
+bjt pn=2N3904 pins=EBC footprint=TO-92_Inline

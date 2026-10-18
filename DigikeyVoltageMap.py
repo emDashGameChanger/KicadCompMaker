@@ -13,6 +13,12 @@ import re
 # still works correctly via the client-side filtering fallback in the search
 # functions - it's just less precise/efficient than a direct server-side filter.
 VOLTAGE_VALUE_IDS = {
+    # Low-voltage ratings (confirmed against the ceramic MLCC leaf, 60)
+    "6.3V": "252155",
+    "10V": "74515",
+    "16V": "108742",
+    "35V": "194844",
+    "63V": "260651",
     "25V": "159247",
     "50V": "238738",
     "100V": "69629",

@@ -2,13 +2,15 @@ import re
 
 try:
     from .TH_Transistor_Common import (
-        match_stock_footprint, search_leaf, dedupe_and_sort, filter_by_package,
-        digikey_pn, get_param, TRANSISTOR_PACKAGE_IDX, STOCK_FP_LIB,
+        build_pinout_confirm, pick_default_numbers, mount_filter, search_leaf,
+        dedupe_and_sort, filter_by_package, digikey_pn, get_param,
+        TRANSISTOR_PACKAGE_IDX, SMD_TRANSISTOR_PACKAGE_IDX,
     )
 except ImportError:
     from TH_Transistor_Common import (
-        match_stock_footprint, search_leaf, dedupe_and_sort, filter_by_package,
-        digikey_pn, get_param, TRANSISTOR_PACKAGE_IDX, STOCK_FP_LIB,
+        build_pinout_confirm, pick_default_numbers, mount_filter, search_leaf,
+        dedupe_and_sort, filter_by_package, digikey_pn, get_param,
+        TRANSISTOR_PACKAGE_IDX, SMD_TRANSISTOR_PACKAGE_IDX,
     )
 
 MOSFET_CATEGORY_ID = "278"  # Single FETs, MOSFETs - also holds GaNFET/SiCFET, hence the
@@ -20,6 +22,7 @@ MOSFET_TECHNOLOGY_VALUE_ID = "377049"  # MOSFET (Metal Oxide)
 
 
 def process_mosfet(product_json, lib_config=None):
+    smd = bool((lib_config or {}).get("smd"))
     mpn = product_json.get("ManufacturerProductNumber", "Unknown")
     datasheet = product_json.get("DatasheetUrl", "")
     price = product_json.get("UnitPrice", 999.99)
@@ -34,7 +37,14 @@ def process_mosfet(product_json, lib_config=None):
     pkg_raw = get_param(params, 16, "")
 
     symbol_name = "Q_" + re.sub(r'[^A-Za-z0-9_-]', '_', mpn)
-    fp_match = match_stock_footprint(pkg_raw)
+
+    sym_lib_name = "Q_SMD_emDashGameChanger" if smd else "Q_TH_emDashGameChanger"
+    default_numbers = pick_default_numbers(
+        pkg_raw, smd,
+        tht_default={"G": "1", "D": "2", "S": "3"},
+        smd_default={"G": "1", "S": "2", "D": "3"},
+        smd_tab_default={"G": "1", "D": "2", "S": "3"},
+    )
 
     processed_data = {
         "Symbol Data": {
@@ -59,39 +69,30 @@ def process_mosfet(product_json, lib_config=None):
         "Footprint Data": {},
         "footprint_name": None,
         "skip_footprint_gen": True,
-        "sym_lib_name": "Q_TH_emDashGameChanger",
-        "fp_lib_name": "Q_TH_emDashGameChanger",
+        "sym_lib_name": sym_lib_name,
+        "fp_lib_name": sym_lib_name,
         "fp_template": None,
         "sym_template": "symbolTemplates/TransistorMOSFETSymbolTemplate.txt",
         "sym_preamble": '(kicad_symbol_lib\n\t(version 20231120)\n\t(generator "emDashGameChanger\'s transistor generator")\n\t(generator_version "0.1")\n',
         # Consumed by plugin._confirm_and_generate_transistor before generate_library_files
         # is called - never trusted as final without a human approving/editing it.
-        "pinout_confirm": {
-            "family": "MOSFET",
-            "terminals": ["G", "D", "S"],
-            # Documented placeholder guess (common small-signal G-D-S lead order,
-            # e.g. 2N7000-style TO-92 parts) - shown to the human as "unconfirmed",
-            # never auto-applied.
-            "default_numbers": {"G": "1", "D": "2", "S": "3"},
-            "package_raw": pkg_raw,
-            "footprint_lib": STOCK_FP_LIB,
-            "footprint_candidates": fp_match["candidates"],
-            "footprint_resolved": fp_match["footprint"],
-            "mpn": mpn,
-            "datasheet": datasheet,
-        },
+        "pinout_confirm": build_pinout_confirm(
+            "MOSFET", ["G", "D", "S"],
+            # Documented placeholder guesses (THT/tab packages G-D-S, e.g.
+            # 2N7000/IRF540/DPAK; SOT-23 G-S-D, e.g. BSS138) - shown to the
+            # human as "unconfirmed", never auto-applied.
+            default_numbers, pkg_raw, mpn, datasheet, smd,
+        ),
     }
     return processed_data
 
 
-def search_tht_mosfet(part_number, polarity_idx, pkg_idx, access_token, client_id, token_refresher=None):
+def search_tht_mosfet(part_number, polarity_idx, pkg_idx, access_token, client_id, token_refresher=None, smd=False):
     part_number = part_number.strip()
-    mount_filter = [{"ParameterId": 69, "FilterValues": [{"Id": "411897"}]}]  # Through Hole
-
     # Part-number search: per the established convention (see TH_Diodes.py), Type/
     # Technology/Polarity filters are ignored - DigiKey's keyword match already
     # disambiguates, and extra parametric filters risk excluding legitimate variants.
-    filters = list(mount_filter)
+    filters = mount_filter(smd)
     if not part_number:
         filters.append({"ParameterId": 570, "FilterValues": [{"Id": MOSFET_TECHNOLOGY_VALUE_ID}]})  # MOSFET (Metal Oxide)
         if polarity_idx in MOSFET_POLARITY_VALUE_ID:
@@ -101,7 +102,8 @@ def search_tht_mosfet(part_number, polarity_idx, pkg_idx, access_token, client_i
     products = search_leaf(keywords, MOSFET_CATEGORY_ID, filters, 50, access_token, client_id, token_refresher)
     products = dedupe_and_sort(products)
 
-    if pkg_idx in TRANSISTOR_PACKAGE_IDX:
-        products = filter_by_package(products, TRANSISTOR_PACKAGE_IDX[pkg_idx])
+    pkg_table = SMD_TRANSISTOR_PACKAGE_IDX if smd else TRANSISTOR_PACKAGE_IDX
+    if pkg_idx in pkg_table:
+        products = filter_by_package(products, pkg_table[pkg_idx], smd)
 
     return {"Products": products, "ProductsCount": len(products)}

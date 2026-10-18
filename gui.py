@@ -27,6 +27,22 @@ TRANSISTOR_PKG_OPTS = ["I don't care", "TO-92", "TO-18", "TO-39", "TO-220", "TO-
 BJT_POLARITY_OPTS = ["I don't care", "NPN", "PNP"]
 FET_POLARITY_OPTS = ["I don't care", "N-Channel", "P-Channel"]
 
+# Surface mount. Labels double as the batch-import field values (see BatchImport)
+# and as the keys the SMD_* search functions map to Digi-Key ValueIds.
+SMD_RES_SIZE_OPTS = ["I don't care", "0201", "0402", "0603", "0805", "1206", "1210", "2010", "2512"]
+SMD_RES_TOL_OPTS = ["I don't care", "0.1%", "0.5%", "1%", "5%"]
+SMD_RES_PWR_OPTS = ["I don't care", "1/20W", "1/16W", "1/10W", "1/8W", "1/4W", "1/2W", "1W"]
+SMD_CAP_SIZE_OPTS = ["I don't care", "0201", "0402", "0603", "0805", "1206", "1210", "1812", "2220"]
+SMD_CAP_VOL_OPTS = ["I don't care", "6.3v", "10v", "16v", "25v", "35v", "50v", "100v"]
+SMD_CAP_DIELECTRIC_OPTS = ["I don't care", "C0G/NP0", "X5R", "X7R", "X7S", "Y5V"]
+SMD_TANT_CASE_OPTS = ["I don't care", "A (3216)", "B (3528)", "C (6032)", "D (7343)", "E (7360)"]
+# Index-aligned with TH_Diodes.SMD_DIODE_PACKAGE_IDX / TH_Transistor_Common.SMD_TRANSISTOR_PACKAGE_IDX
+SMD_DIODE_PKG_OPTS = ["I don't care", "SOD-123", "SOD-323", "SOD-523", "SMA", "SMB", "SMC", "MiniMELF"]
+SMD_TRANSISTOR_PKG_OPTS = ["I don't care", "SOT-23", "SOT-323", "SOT-523", "SOT-89", "SOT-223", "DPAK (TO-252)", "D2PAK (TO-263)"]
+SMD_RES_SIZE_DEFAULT = SMD_RES_SIZE_OPTS.index("0603")
+SMD_RES_TOL_DEFAULT = SMD_RES_TOL_OPTS.index("1%")
+SMD_CAP_SIZE_DEFAULT = SMD_CAP_SIZE_OPTS.index("0603")
+
 class ProgressCounterDialog(wx.Dialog):
     def __init__(self, parent, title, message):
         wx.Dialog.__init__(self, parent, title=title, style=wx.DEFAULT_DIALOG_STYLE)
@@ -111,57 +127,145 @@ class DigikeyDialog(wx.Dialog):
         
         return {'val': val_ctrl, 'type': type_radios, 'vol': vol_radios, 'cust_vol': vol_cust_ctrl, 'vol_opts': vol_opts}
 
-    def create_transistor_controls(self, parent, key, state, polarity_opts):
+    def _radio_row(self, parent, sizer, label, opts, state, state_key, default_idx=0):
+        """Label + one radio group, restored from/registered under state_key so
+        plugin.on_search_click can save every group generically."""
+        row = wx.BoxSizer(wx.HORIZONTAL)
+        row.Add(wx.StaticText(parent, label=label), 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        wrap = wx.WrapSizer(wx.HORIZONTAL)
+        saved_idx = state.get(state_key, default_idx)
+        if saved_idx >= len(opts):
+            saved_idx = default_idx
+        radios = []
+        for i, opt in enumerate(opts):
+            rb = wx.RadioButton(parent, label=opt, style=wx.RB_GROUP if i == 0 else 0)
+            if i == saved_idx:
+                rb.SetValue(True)
+            radios.append(rb)
+            wrap.Add(rb, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        row.Add(wrap, 1, wx.EXPAND)
+        sizer.Add(row, 0, wx.EXPAND | wx.ALL, 5)
+        self.radio_groups[state_key] = radios
+        return radios
+
+    def _text_row(self, parent, sizer, label, state, state_key=None):
+        row = wx.BoxSizer(wx.HORIZONTAL)
+        row.Add(wx.StaticText(parent, label=label), 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        ctrl = wx.TextCtrl(parent)
+        if state_key:
+            ctrl.SetValue(state.get(state_key, ''))
+            self.text_fields[state_key] = ctrl
+        row.Add(ctrl, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        sizer.Add(row, 0, wx.EXPAND | wx.ALL, 5)
+        return ctrl
+
+    def create_smd_cap_controls(self, parent, key, state, size=False, dielectric=False, case=False):
+        """Value-first controls for the SMD capacitor sub-tabs."""
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        controls = {'val': self._text_row(parent, sizer, "Value:", state)}
+        if size:
+            controls['size'] = self._radio_row(parent, sizer, "Size:", SMD_CAP_SIZE_OPTS, state,
+                                               f'{key}_size_idx', SMD_CAP_SIZE_DEFAULT)
+        controls['vol'] = self._radio_row(parent, sizer, "Voltage:", SMD_CAP_VOL_OPTS, state, f'{key}_vol_idx')
+        controls['cust_vol'] = self._text_row(parent, sizer, "Custom voltage:", state)
+        if dielectric:
+            controls['dielectric'] = self._radio_row(parent, sizer, "Dielectric:", SMD_CAP_DIELECTRIC_OPTS,
+                                                     state, f'{key}_dielectric_idx')
+        if case:
+            controls['case'] = self._radio_row(parent, sizer, "Case:", SMD_TANT_CASE_OPTS, state, f'{key}_case_idx')
+        parent.SetSizer(sizer)
+        return controls
+
+    def create_diode_controls(self, parent, key, state, pkg_opts):
+        """Part-number-first diode controls, shared by the THT and SMD Diodes
+        tabs. Type is a radio row (first 4) + picklist (rest), combined into one
+        type index; Technology is only enabled for types that support it."""
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        pn_ctrl = self._text_row(parent, sizer, "Part Number:", state, f'{key}_pn')
+
+        hint = wx.StaticText(parent, label="Other filters below are ignored when a part number is given.")
+        sizer.Add(hint, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 5)
+
+        saved_type_idx = state.get(f'{key}_type_idx', 0)
+
+        row_type = wx.BoxSizer(wx.HORIZONTAL)
+        row_type.Add(wx.StaticText(parent, label="Type:"), 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        type_radios = []
+        for i, opt in enumerate(DIODE_TYPE_RADIO_OPTS):
+            rb = wx.RadioButton(parent, label=opt, style=wx.RB_GROUP if i == 0 else 0)
+            if i == saved_type_idx:
+                rb.SetValue(True)
+            type_radios.append(rb)
+            row_type.Add(rb, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+
+        type_pick = wx.Choice(parent, choices=DIODE_TYPE_PICK_OPTS)
+        pick_idx = saved_type_idx - len(DIODE_TYPE_RADIO_OPTS)
+        if 0 <= pick_idx < len(DIODE_TYPE_PICK_OPTS):
+            type_pick.SetSelection(pick_idx)
+        row_type.Add(type_pick, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        sizer.Add(row_type, 0, wx.EXPAND | wx.ALL, 5)
+
+        tech_radios = self._radio_row(parent, sizer, "Technology:", DIODE_TECH_OPTS, state, f'{key}_tech_idx')
+
+        def type_idx():
+            pick_sel = type_pick.GetSelection()
+            if pick_sel != wx.NOT_FOUND:
+                return len(DIODE_TYPE_RADIO_OPTS) + pick_sel
+            for i, rb in enumerate(type_radios):
+                if rb.GetValue():
+                    return i
+            return 0
+
+        def update_tech_enabled():
+            enabled = type_idx() in DIODE_TYPES_WITH_TECHNOLOGY
+            for rb in tech_radios:
+                rb.Enable(enabled)
+
+        def on_type_radio(event):
+            type_pick.SetSelection(wx.NOT_FOUND)
+            update_tech_enabled()
+
+        def on_type_pick(event):
+            for rb in type_radios:
+                rb.SetValue(False)
+            update_tech_enabled()
+
+        for rb in type_radios:
+            rb.Bind(wx.EVT_RADIOBUTTON, on_type_radio)
+        type_pick.Bind(wx.EVT_CHOICE, on_type_pick)
+        update_tech_enabled()
+
+        pkg_radios = self._radio_row(parent, sizer, "Package:", pkg_opts, state, f'{key}_pkg_idx')
+
+        parent.SetSizer(sizer)
+        # type_idx is a callable - the combined radio+picklist selection isn't a
+        # plain radio group, so it's saved separately (plugin.on_search_click).
+        return {'pn': pn_ctrl, 'type_idx': type_idx, 'tech': tech_radios, 'pkg': pkg_radios}
+
+    def create_transistor_controls(self, parent, key, state, polarity_opts, pkg_opts=TRANSISTOR_PKG_OPTS):
         """Part-number-first controls shared by the BJT/JFET/MOSFET sub-tabs -
         transistors aren't specified by one scalar 'value' the way R/C are, so
         this mirrors the Diode tab's part-number-first layout rather than
         create_cap_controls's value-first one."""
         sizer = wx.BoxSizer(wx.VERTICAL)
-
-        row_pn = wx.BoxSizer(wx.HORIZONTAL)
-        lbl_pn = wx.StaticText(parent, label="Part Number:")
-        pn_ctrl = wx.TextCtrl(parent)
-        pn_ctrl.SetValue(state.get(f'{key}_pn', ''))
-        row_pn.Add(lbl_pn, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        row_pn.Add(pn_ctrl, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        sizer.Add(row_pn, 0, wx.EXPAND | wx.ALL, 5)
+        pn_ctrl = self._text_row(parent, sizer, "Part Number:", state, f'{key}_pn')
 
         hint = wx.StaticText(parent, label="Other filters below are ignored when a part number is given.")
         sizer.Add(hint, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 5)
 
-        row_pol = wx.BoxSizer(wx.HORIZONTAL)
-        lbl_pol = wx.StaticText(parent, label="Polarity:")
-        row_pol.Add(lbl_pol, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        pol_radios = []
-        saved_pol_idx = state.get(f'{key}_polarity_idx', 0)
-        for i, opt in enumerate(polarity_opts):
-            style = wx.RB_GROUP if i == 0 else 0
-            rb = wx.RadioButton(parent, label=opt, style=style)
-            if i == saved_pol_idx:
-                rb.SetValue(True)
-            pol_radios.append(rb)
-            row_pol.Add(rb, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        sizer.Add(row_pol, 0, wx.EXPAND | wx.ALL, 5)
-
-        row_pkg = wx.BoxSizer(wx.HORIZONTAL)
-        lbl_pkg = wx.StaticText(parent, label="Package:")
-        row_pkg.Add(lbl_pkg, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        pkg_radios = []
-        saved_pkg_idx = state.get(f'{key}_pkg_idx', 0)
-        for i, opt in enumerate(TRANSISTOR_PKG_OPTS):
-            style = wx.RB_GROUP if i == 0 else 0
-            rb = wx.RadioButton(parent, label=opt, style=style)
-            if i == saved_pkg_idx:
-                rb.SetValue(True)
-            pkg_radios.append(rb)
-            row_pkg.Add(rb, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        sizer.Add(row_pkg, 0, wx.EXPAND | wx.ALL, 5)
+        pol_radios = self._radio_row(parent, sizer, "Polarity:", polarity_opts, state, f'{key}_polarity_idx')
+        pkg_radios = self._radio_row(parent, sizer, "Package:", pkg_opts, state, f'{key}_pkg_idx')
 
         parent.SetSizer(sizer)
         return {'pn': pn_ctrl, 'polarity': pol_radios, 'pkg': pkg_radios}
 
     def __init__(self, parent, state):
-        wx.Dialog.__init__(self, parent, title="Digikey Importer", size=(650, 400), style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
+        wx.Dialog.__init__(self, parent, title="Digikey Importer", size=(760, 480), style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
+
+        # state_key -> radio group / text control, saved generically by
+        # plugin.on_search_click (see _radio_row / _text_row)
+        self.radio_groups = {}
+        self.text_fields = {}
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -268,99 +372,9 @@ class DigikeyDialog(wx.Dialog):
         self.tht_notebook.AddPage(self.tht_capacitors, "Capacitors")
 
         self.tht_diodes = wx.Panel(self.tht_notebook)
-        diode_sizer = wx.BoxSizer(wx.VERTICAL)
-
-        # Part Number
-        row_pn = wx.BoxSizer(wx.HORIZONTAL)
-        lbl_pn = wx.StaticText(self.tht_diodes, label="Part Number:")
-        self.tht_diode_pn = wx.TextCtrl(self.tht_diodes)
-        self.tht_diode_pn.SetValue(state.get('diode_pn', ''))
-        row_pn.Add(lbl_pn, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        row_pn.Add(self.tht_diode_pn, 1, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        diode_sizer.Add(row_pn, 0, wx.EXPAND | wx.ALL, 5)
-
-        hint = wx.StaticText(self.tht_diodes, label="Other filters below are ignored when a part number is given.")
-        diode_sizer.Add(hint, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 5)
-
-        saved_diode_type_idx = state.get('diode_type_idx', 0)
-
-        # Type: radio row (first 4) + picklist (remaining)
-        row_type = wx.BoxSizer(wx.HORIZONTAL)
-        lbl_type = wx.StaticText(self.tht_diodes, label="Type:")
-        row_type.Add(lbl_type, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        self.tht_diode_type_radios = []
-        for i, opt in enumerate(DIODE_TYPE_RADIO_OPTS):
-            style = wx.RB_GROUP if i == 0 else 0
-            rb = wx.RadioButton(self.tht_diodes, label=opt, style=style)
-            if i == saved_diode_type_idx:
-                rb.SetValue(True)
-            self.tht_diode_type_radios.append(rb)
-            row_type.Add(rb, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-
-        self.tht_diode_type_pick = wx.Choice(self.tht_diodes, choices=DIODE_TYPE_PICK_OPTS)
-        pick_idx = saved_diode_type_idx - len(DIODE_TYPE_RADIO_OPTS)
-        if 0 <= pick_idx < len(DIODE_TYPE_PICK_OPTS):
-            self.tht_diode_type_pick.SetSelection(pick_idx)
-        row_type.Add(self.tht_diode_type_pick, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        diode_sizer.Add(row_type, 0, wx.EXPAND | wx.ALL, 5)
-
-        # Technology
-        row_tech = wx.BoxSizer(wx.HORIZONTAL)
-        lbl_tech = wx.StaticText(self.tht_diodes, label="Technology:")
-        row_tech.Add(lbl_tech, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        self.tht_diode_tech_radios = []
-        saved_tech_idx = state.get('diode_tech_idx', 0)
-        for i, opt in enumerate(DIODE_TECH_OPTS):
-            style = wx.RB_GROUP if i == 0 else 0
-            rb = wx.RadioButton(self.tht_diodes, label=opt, style=style)
-            if i == saved_tech_idx:
-                rb.SetValue(True)
-            self.tht_diode_tech_radios.append(rb)
-            row_tech.Add(rb, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        diode_sizer.Add(row_tech, 0, wx.EXPAND | wx.ALL, 5)
-
-        def update_tech_enabled():
-            pick_sel = self.tht_diode_type_pick.GetSelection()
-            if pick_sel != wx.NOT_FOUND:
-                type_idx = len(DIODE_TYPE_RADIO_OPTS) + pick_sel
-            else:
-                type_idx = 0
-                for i, rb in enumerate(self.tht_diode_type_radios):
-                    if rb.GetValue(): type_idx = i
-            enabled = type_idx in DIODE_TYPES_WITH_TECHNOLOGY
-            for rb in self.tht_diode_tech_radios:
-                rb.Enable(enabled)
-
-        def on_type_radio(event):
-            self.tht_diode_type_pick.SetSelection(wx.NOT_FOUND)
-            update_tech_enabled()
-
-        def on_type_pick(event):
-            for rb in self.tht_diode_type_radios:
-                rb.SetValue(False)
-            update_tech_enabled()
-
-        for rb in self.tht_diode_type_radios:
-            rb.Bind(wx.EVT_RADIOBUTTON, on_type_radio)
-        self.tht_diode_type_pick.Bind(wx.EVT_CHOICE, on_type_pick)
-        update_tech_enabled()
-
-        # Package
-        row_pkg = wx.BoxSizer(wx.HORIZONTAL)
-        lbl_pkg = wx.StaticText(self.tht_diodes, label="Package:")
-        row_pkg.Add(lbl_pkg, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        self.tht_diode_pkg_radios = []
-        saved_pkg_idx = state.get('diode_pkg_idx', 0)
-        for i, opt in enumerate(DIODE_PKG_OPTS):
-            style = wx.RB_GROUP if i == 0 else 0
-            rb = wx.RadioButton(self.tht_diodes, label=opt, style=style)
-            if i == saved_pkg_idx:
-                rb.SetValue(True)
-            self.tht_diode_pkg_radios.append(rb)
-            row_pkg.Add(rb, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        diode_sizer.Add(row_pkg, 0, wx.EXPAND | wx.ALL, 5)
-
-        self.tht_diodes.SetSizer(diode_sizer)
+        self.diode_tabs = {}
+        # 'diode' state prefix kept from before the SMD tab existed
+        self.diode_tabs['tht'] = self.create_diode_controls(self.tht_diodes, 'diode', state, DIODE_PKG_OPTS)
         self.tht_notebook.AddPage(self.tht_diodes, "Diodes")
 
         self.tht_transistors = wx.Panel(self.tht_notebook)
@@ -405,24 +419,69 @@ class DigikeyDialog(wx.Dialog):
         self.tab_smd = wx.Panel(self.notebook)
         self.notebook.AddPage(self.tab_smd, "Surface Mount")
 
-        # SMD Sub-tabs
         smd_sizer = wx.BoxSizer(wx.VERTICAL)
+        # Shared by every SMD sub-tab: picks KiCad's _HandSolder/_Handsoldering
+        # stock pad variant wherever one exists (chip R/C, tantalum, most diodes).
+        self.smd_handsolder = wx.CheckBox(self.tab_smd, label="Hand-solder pads (where KiCad has a variant)")
+        self.smd_handsolder.SetValue(state.get('smd_handsolder', True))
+        smd_sizer.Add(self.smd_handsolder, 0, wx.ALL, 5)
+
         self.smd_notebook = wx.Notebook(self.tab_smd)
 
+        # Resistors
         self.smd_resistors = wx.Panel(self.smd_notebook)
-
-        # Hello World Example
-        res_sizer = wx.BoxSizer(wx.VERTICAL)
-        res_label = wx.StaticText(self.smd_resistors, label="Hello Surface Mount Resitor")
-        res_sizer.Add(res_label, 0, wx.ALL, 10)
-        self.smd_resistors.SetSizer(res_sizer)
-
+        smd_res_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.smd_res = {
+            'val': self._text_row(self.smd_resistors, smd_res_sizer, "Value:", state),
+            'size': self._radio_row(self.smd_resistors, smd_res_sizer, "Size:", SMD_RES_SIZE_OPTS, state,
+                                    'smd_res_size_idx', SMD_RES_SIZE_DEFAULT),
+            'tol': self._radio_row(self.smd_resistors, smd_res_sizer, "Tolerance:", SMD_RES_TOL_OPTS, state,
+                                   'smd_res_tol_idx', SMD_RES_TOL_DEFAULT),
+            'pwr': self._radio_row(self.smd_resistors, smd_res_sizer, "Power:", SMD_RES_PWR_OPTS, state,
+                                   'smd_res_pwr_idx'),
+        }
+        self.smd_resistors.SetSizer(smd_res_sizer)
         self.smd_notebook.AddPage(self.smd_resistors, "Resistors")
+
+        # Capacitors
         self.smd_capacitors = wx.Panel(self.smd_notebook)
+        smd_cap_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.smd_cap_notebook = wx.Notebook(self.smd_capacitors)
+        self.smd_cap_tabs = {}
+        for key, title, opts in (('mlcc', "Ceramic (MLCC)", {'size': True, 'dielectric': True}),
+                                 ('tant', "Tantalum", {'case': True}),
+                                 ('alum', "Aluminium Electrolytic", {})):
+            panel = wx.Panel(self.smd_cap_notebook)
+            self.smd_cap_tabs[key] = self.create_smd_cap_controls(panel, f'smd_cap_{key}', state, **opts)
+            self.smd_cap_notebook.AddPage(panel, title)
+        smd_cap_sizer.Add(self.smd_cap_notebook, 1, wx.EXPAND | wx.ALL, 5)
+        self.smd_capacitors.SetSizer(smd_cap_sizer)
         self.smd_notebook.AddPage(self.smd_capacitors, "Capacitors")
 
+        # Diodes
         self.smd_diodes = wx.Panel(self.smd_notebook)
+        self.diode_tabs['smd'] = self.create_diode_controls(self.smd_diodes, 'smd_diode', state, SMD_DIODE_PKG_OPTS)
         self.smd_notebook.AddPage(self.smd_diodes, "Diodes")
+
+        # Transistors
+        self.smd_transistors = wx.Panel(self.smd_notebook)
+        smd_tr_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.smd_transistor_notebook = wx.Notebook(self.smd_transistors)
+        self.smd_transistor_tabs = {}
+        for key, title, pol_opts in (('bjt', "BJT", BJT_POLARITY_OPTS),
+                                     ('jfet', "JFET", FET_POLARITY_OPTS),
+                                     ('mosfet', "MOSFET", FET_POLARITY_OPTS)):
+            panel = wx.Panel(self.smd_transistor_notebook)
+            self.smd_transistor_tabs[key] = self.create_transistor_controls(
+                panel, f'smd_transistor_{key}', state, pol_opts, SMD_TRANSISTOR_PKG_OPTS)
+            self.smd_transistor_notebook.AddPage(panel, title)
+        smd_tr_sizer.Add(self.smd_transistor_notebook, 1, wx.EXPAND | wx.ALL, 5)
+        self.smd_transistors.SetSizer(smd_tr_sizer)
+        self.smd_notebook.AddPage(self.smd_transistors, "Transistors")
+
+        self.smd_notebook.SetSelection(state.get('smd_tab', 0))
+        self.smd_cap_notebook.SetSelection(state.get('smd_cap_tab', 0))
+        self.smd_transistor_notebook.SetSelection(state.get('smd_transistor_tab', 0))
 
         smd_sizer.Add(self.smd_notebook, 1, wx.EXPAND | wx.ALL, 5)
         self.tab_smd.SetSizer(smd_sizer)
@@ -434,7 +493,9 @@ class DigikeyDialog(wx.Dialog):
         batch_sizer = wx.BoxSizer(wx.VERTICAL)
         hint = wx.StaticText(self.tab_batch, label=(
             "One spec per line: <type> field=value ... (# comments and blank lines are ignored).\n"
-            "Types: resistor, cap_alum, cap_film, cap_mica. See README.md for full syntax."))
+            "THT types: resistor, cap_alum, cap_film, cap_mica, diode, bjt, jfet, mosfet\n"
+            "SMD types: smd_resistor, smd_cap, smd_tant, smd_alum, smd_diode, smd_bjt, smd_jfet, smd_mosfet\n"
+            "Transistors: add pins=BEC (terminal per pin 1..3) to skip the pinout dialog. See README.md."))
         batch_sizer.Add(hint, 0, wx.EXPAND | wx.ALL, 5)
 
         self.batch_text = wx.TextCtrl(self.tab_batch, style=wx.TE_MULTILINE)
@@ -752,7 +813,13 @@ class PinoutConfirmDialog(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.on_ok, id=wx.ID_OK)
 
     def _refresh_fp_preview(self, footprint_name):
-        bmp = render_footprint_preview(footprint_name) if footprint_name else None
+        fp_dir = self.pinout_confirm.get('footprint_dir')
+        if footprint_name and fp_dir:
+            bmp = render_footprint_preview(footprint_name, fp_dir=fp_dir)
+        elif footprint_name:
+            bmp = render_footprint_preview(footprint_name)
+        else:
+            bmp = None
         if bmp is None:
             bmp = wx.Bitmap(260, 200)
             dc = wx.MemoryDC(bmp)

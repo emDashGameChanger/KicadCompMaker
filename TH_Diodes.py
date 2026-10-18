@@ -2,9 +2,11 @@ import requests
 import re
 import concurrent.futures
 try:
-    from .DigikeyPartNumber import pick_digikey_pn
+    from .DigikeyPartNumber import pick_digikey_pn, check_api_response
+    from .SMD_Common import handsolder_suffix
 except ImportError:
-    from DigikeyPartNumber import pick_digikey_pn
+    from DigikeyPartNumber import pick_digikey_pn, check_api_response
+    from SMD_Common import handsolder_suffix
 
 # Package text (from ParameterId 16, "Package / Case") -> (stock KiCad footprint
 # name in the Diode_THT library, body length mm, body diameter mm). Dimensions and
@@ -32,6 +34,40 @@ DIODE_PACKAGE_ALIASES = {
 
 STOCK_FP_LIB = "Diode_THT"  # KiCad's own stock footprint library nickname
 
+# Surface-mount counterpart: normalized package -> (stock Diode_SMD footprint,
+# hand-solder variant or None). Pad 1 is the cathode on every one of these,
+# matching DiodeSymbolTemplate's pin 1 = K. SMD packages never fall back to a
+# generated footprint - an unmapped package is reported as an error instead.
+SMD_DIODE_STOCK_FOOTPRINTS = {
+    "SOD-123":     ("D_SOD-123", None),
+    "SOD-123F":    ("D_SOD-123F", None),
+    "SOD-323":     ("D_SOD-323", "D_SOD-323_HandSoldering"),
+    "SOD-323F":    ("D_SOD-323F", None),
+    "SOD-523":     ("D_SOD-523", None),
+    "SOD-128":     ("D_SOD-128", None),
+    "PowerDI-123": ("D_PowerDI-123", None),
+    "SMA":         ("D_SMA", "D_SMA_Handsoldering"),
+    "SMB":         ("D_SMB", "D_SMB_Handsoldering"),
+    "SMC":         ("D_SMC", "D_SMC_Handsoldering"),
+    "MiniMELF":    ("D_MiniMELF", "D_MiniMELF_Handsoldering"),
+    "MELF":        ("D_MELF", "D_MELF_Handsoldering"),
+}
+
+# DigiKey's SMD "Package / Case" text leads with the JEDEC name, e.g.
+# "DO-214AC, SMA", "DO-213AC, MINI-MELF, SOD-80", "SC-76, SOD-323".
+SMD_DIODE_PACKAGE_ALIASES = {
+    "DO-214AC": "SMA",
+    "DO-214AA": "SMB",
+    "DO-214AB": "SMC",
+    "DO-213AC": "MiniMELF",
+    "MINI-MELF": "MiniMELF",
+    "SOD-80": "MiniMELF",
+    "DO-213AB": "MELF",
+    "POWERDI-123": "PowerDI-123",
+}
+
+SMD_STOCK_FP_LIB = "Diode_SMD"
+
 # GUI Type selector idx -> (DigiKey leaf CategoryId or None, has Technology filter)
 DIODE_TYPE_CATEGORIES = {
     0: (None, True),   # I don't care
@@ -52,9 +88,32 @@ DIODE_PACKAGE_IDX = {
     4: "DO-201AD",
 }
 
+# GUI SMD Package selector idx -> normalized package key
+SMD_DIODE_PACKAGE_IDX = {
+    1: "SOD-123",
+    2: "SOD-323",
+    3: "SOD-523",
+    4: "SMA",
+    5: "SMB",
+    6: "SMC",
+    7: "MiniMELF",
+}
 
-def normalize_package(raw_text):
-    """Returns a key into DIODE_STOCK_FOOTPRINTS, or None if unrecognized."""
+THT_MOUNT_FILTER = [{"ParameterId": 69, "FilterValues": [{"Id": "411897"}]}]  # Through Hole
+SMD_MOUNT_FILTER = [{"ParameterId": 69, "FilterValues": [{"Id": "409393"}, {"Id": "409430"}]}]  # Surface Mount (+ wettable flank)
+
+
+def normalize_package(raw_text, smd=False):
+    """Returns a key into DIODE_STOCK_FOOTPRINTS (or SMD_DIODE_STOCK_FOOTPRINTS
+    when smd), or None if unrecognized."""
+    if smd:
+        text = (raw_text or "").upper().replace("\u2122", "")  # drop the TM in "PowerDI(TM) 123"
+        text = re.sub(r'POWERDI\s*-?\s*123', 'POWERDI-123', text)
+        for tok in re.findall(r'MINI-MELF|MELF|POWERDI-123|(?:DO|SOD|SC)-\d+[A-Z]*|\bSM[ABC]\b', text):
+            tok = SMD_DIODE_PACKAGE_ALIASES.get(tok, tok)
+            if tok in SMD_DIODE_STOCK_FOOTPRINTS:
+                return tok
+        return None
     for tok in re.findall(r'DO-\d+[A-Z]*', raw_text or ""):
         tok = DIODE_PACKAGE_ALIASES.get(tok, tok)
         if tok in DIODE_STOCK_FOOTPRINTS:
@@ -62,7 +121,9 @@ def normalize_package(raw_text):
     return None
 
 
-def process_diode(product_json):
+def process_diode(product_json, lib_config=None):
+    smd = bool((lib_config or {}).get("smd"))
+    handsolder = (lib_config or {}).get("handsolder", True)
     # Extraction
     mpn = product_json.get("ManufacturerProductNumber", "Unknown")
     datasheet = product_json.get("DatasheetUrl", "")
@@ -91,8 +152,23 @@ def process_diode(product_json):
     # value-driven resistor/capacitor generators)
     symbol_name = "D_" + re.sub(r'[^A-Za-z0-9_-]', '_', mpn)
 
-    package = normalize_package(pkg_raw)
-    if package:
+    package = normalize_package(pkg_raw, smd)
+    error = None
+    if smd:
+        footprint_name = None
+        footprint_data = {}
+        skip_footprint_gen = True
+        if package:
+            fp_name, hand_name = SMD_DIODE_STOCK_FOOTPRINTS[package]
+            if handsolder and hand_name:
+                fp_name = hand_name
+            footprint_field = f"{SMD_STOCK_FP_LIB}:{fp_name}"
+            symbol_name += handsolder_suffix(fp_name)
+        else:
+            footprint_field = ""
+            error = (f"No stock 2-terminal KiCad footprint for package '{pkg_raw or 'unknown'}' "
+                     f"(multi-pin/array SMD diodes aren't supported).")
+    elif package:
         fp_name, length, diameter = DIODE_STOCK_FOOTPRINTS[package]
         footprint_field = f"{STOCK_FP_LIB}:{fp_name}"
         skip_footprint_gen = True
@@ -132,12 +208,15 @@ def process_diode(product_json):
         "Footprint Data": footprint_data,
         "footprint_name": footprint_name,
         "skip_footprint_gen": skip_footprint_gen,
-        "sym_lib_name": "D_TH_emDashGameChanger",
-        "fp_lib_name": "D_TH_emDashGameChanger",
+        "sym_lib_name": "D_SMD_emDashGameChanger" if smd else "D_TH_emDashGameChanger",
+        "fp_lib_name": "D_SMD_emDashGameChanger" if smd else "D_TH_emDashGameChanger",
         "fp_template": "footprintTemplates/TH_DiodeTemplate.kicad_mod",
         "sym_template": "symbolTemplates/DiodeSymbolTemplate.txt",
         "sym_preamble": '(kicad_symbol_lib\n\t(version 20231120)\n\t(generator "emDashGameChanger\'s diode generator")\n\t(generator_version "0.1")\n'
     }
+    if error:
+        # generate_library_files refuses to write anything when this is set
+        processed_data["error"] = error
 
     return processed_data
 
@@ -202,6 +281,7 @@ def _search_leaves(keywords, leaves, access_token, client_id, token_refresher):
         futures = [executor.submit(_run, lf, access_token) for lf in leaves]
         for future in concurrent.futures.as_completed(futures):
             leaf_filters, resp = future.result()
+            check_api_response(resp)
             if resp.status_code == 401:
                 to_retry.append(leaf_filters)
             elif resp.status_code == 200:
@@ -213,6 +293,7 @@ def _search_leaves(keywords, leaves, access_token, client_id, token_refresher):
         if new_token:
             for leaf_filters in to_retry:
                 _, resp = _run(leaf_filters, new_token)
+                check_api_response(resp)
                 if resp.status_code == 200:
                     products.extend(resp.json().get("Products", []))
 
@@ -233,9 +314,14 @@ def _dedupe_and_sort(products):
 
 
 def search_tht_diode(part_number, type_idx, tech_idx, pkg_idx, access_token, client_id, token_refresher=None):
+    return search_diode(part_number, type_idx, tech_idx, pkg_idx, access_token, client_id, token_refresher)
+
+
+def search_diode(part_number, type_idx, tech_idx, pkg_idx, access_token, client_id, token_refresher=None, smd=False):
     part_number = part_number.strip()
-    mount_filter = [{"ParameterId": 69, "FilterValues": [{"Id": "411897"}]}]  # Through Hole
-    needs_pkg_filter = pkg_idx in DIODE_PACKAGE_IDX
+    mount_filter = SMD_MOUNT_FILTER if smd else THT_MOUNT_FILTER
+    pkg_table = SMD_DIODE_PACKAGE_IDX if smd else DIODE_PACKAGE_IDX
+    needs_pkg_filter = pkg_idx in pkg_table
 
     if part_number:
         # Part-number search: per explicit user instruction, Type/Technology/Package
@@ -271,17 +357,18 @@ def search_tht_diode(part_number, type_idx, tech_idx, pkg_idx, access_token, cli
                 new_token = token_refresher()
                 if new_token:
                     resp = _post_search(keywords, filter_req, 50, new_token, client_id)
+            check_api_response(resp)
             products = resp.json().get("Products", []) if resp.status_code == 200 else []
 
     products = _dedupe_and_sort(products)
 
     if needs_pkg_filter:
-        target_pkg = DIODE_PACKAGE_IDX[pkg_idx]
+        target_pkg = pkg_table[pkg_idx]
 
         def _pkg_matches(p):
             for param in p.get("Parameters", []):
                 if param.get("ParameterId") == 16:
-                    return normalize_package(param.get("ValueText", "")) == target_pkg
+                    return normalize_package(param.get("ValueText", ""), smd) == target_pkg
             return False
         products = [p for p in products if _pkg_matches(p)]
 
